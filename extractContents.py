@@ -11,9 +11,9 @@ with open('./news_20171231.json', 'r', encoding='utf-8') as f:
     for i in range(1, cnt+1):
         if jdata['news'+str(i)]['press'] == "경향신문":
         #▶, 경향비즈 SNS▶[©경향신문(), 무단전재 및 재배포 금지]
-            print(jdata['news'+str(i)]['title'])
+#             print(jdata['news'+str(i)]['title'])
             jdata['news'+str(i)]['contents'] = jdata['news'+str(i)]['contents'].split('▶')[0]
-            print(jdata['news'+str(i)]['contents'])
+#             print(jdata['news'+str(i)]['contents'])
         #[디지털뉴스국 김수연 인턴기자][ⓒ 매일경제 & mk.co.kr, 무단전재 및 재배포 금지]
         #[디지털뉴스국][ⓒ 매일경제 & mk.co.kr, 무단전재 및 재배포 금지]
         #[디지털뉴스국][ⓒ 매일경제 & mk.co.kr, 무단전재 및 재배포 금지]
@@ -24,4 +24,6 @@ with open('./news_20171231.json', 'r', encoding='utf-8') as f:
         #[도쿄 = 황형규 특파원] [매일경제 공식 페이스북] [오늘의 인기뉴스] [매경 프리미엄][ⓒ 매일경제 & mk.co.kr, 무단전재 및 재배포 금지]
             
         elif jdata['news'+str(i)]['press'] == "매일경제":
-            pass
+            print(jdata['news'+str(i)]['title'])
+            jdata['news'+str(i)]['contents'] = jdata['news'+str(i)]['contents'].split('[')[0]
+            print(jdata['news'+str(i)]['contents'])
