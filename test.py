@@ -40,22 +40,23 @@ def  run_twitter(news):
    twitter_nouns = twitter.nouns(news)
    end_time = time.time()
    print('twitter 끝 - %s 초' % str(end_time - start_time) )
-   
+   print(twitter_nouns)
    #저장할 txt 파일 경로 및 이름 설정
-   with open('twitter_noun.txt', 'w', encoding = 'utf-8') as fstream:
-       fstream.write('twitter_nouns\n')
-       write_list(twitter_nouns, fstream)
-       fstream.write('\n\n')
+#    with open('twitter_noun20180123.txt', 'w', encoding = 'utf-8') as fstream:
+#        fstream.write('twitter_nouns\n')
+#        write_list(twitter_nouns, fstream)
+#        fstream.write('\n\n')
 
 if __name__ == '__main__':
    twitter = Twitter()
    #읽어올 json 파일 경로 및 이름 설정
-   with open('./news20171221.json', 'r', encoding='utf-8') as f:
-       jdata = json.load(f)
-   cnt = len(jdata)
-   news = ''
-   for i in range(1, cnt-1):
-       news += jdata['news'+str(i+1)]['title'] + ' '
-       news += jdata['news'+str(i+1)]['contents'] + ' '
+#    with open('./news20180123.json', 'r', encoding='utf-8') as f:
+#        jdata = json.load(f)
+#    cnt = len(jdata)
+#    news = ''
+#    for i in range(1, cnt-1):
+#        news += jdata['news'+str(i+1)]['title'] + ' '
+#        news += jdata['news'+str(i+1)]['contents'] + ' '
 
+   news = "그는 애널리스트이다."
    run_twitter(news)
