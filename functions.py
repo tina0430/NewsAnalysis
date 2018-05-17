@@ -29,11 +29,13 @@ def economist(contents, title):
         contents = contents.replace(end[0], '')
     return contents
 
+#만족
 def han_gyeong(contents, title):
     for i in ('[국고처', '[인사]'):
         if title.rfind(i) != -1:
             return ''
-    
+    contents = contents.split('(위의 AI인공지능 점수는 재무 데이터를 기반으로 전체 상장 종목과 비교')[0]
+    contents = contents.split('자세한 내용은 한국경제TV 다시보기를 통해 볼 수 있습니다.')[0]
     contents = contents.split('ⓒ 한국경제TV')[0]
     
     email = re.findall(r'([-_\.0-9a-zA-Z]*@wowtv\.co\.kr)', contents)
@@ -41,32 +43,39 @@ def han_gyeong(contents, title):
         print(email)
         contents = contents.split(email[0])[0]
     
-    end = re.findall('[ 가-힣]+기자+[ ]+$', contents)
+    end = re.findall('[가-힣]+[ ]*기자+[ ]*$', contents)
+    if len(end) != 0:
+        contents = contents.replace(end[0], '')
+    
+    end = re.findall('[가-힣]+[ ]*PD+[ ]*$', contents)
     if len(end) != 0:
         contents = contents.replace(end[0], '')
         
-    contents = contents.replace('디지털 뉴스부', '')
+    for i in ['디지털 뉴스부', '디지털뉴스부', '라이온봇기자']:
+        contents = contents.replace(i, '')
     return contents
     
-#     라이온봇기자ⓒ 한국경제TV, 무단 전재 및 재배포 금지[이 시각 코스피] 코스피 현재 2378.84p 하락 반전
-#     이근형기자 lgh04@wowtv.co.krⓒ 한국경제TV, 무단 전재 및 재배포 금지
-#     고정호기자 jhkoh@wowtv.co.krⓒ 한국경제TV, 무단 전재 및 재배포 금지
-#     ⓒ 한국경제TV, 무단 전재 및 재배포 금지
-#     임원식기자 ryan@wowtv.co.krⓒ 한국경제TV, 무단 전재 및 재배포 금지
-#     김태학기자 thkim86@wowtv.co.krⓒ 한국경제TV, 무단 전재 및 재배포 금지
-#     조현석기자 hscho@wowtv.co.krⓒ 한국경제TV, 무단 전재 및 재배포 금지
-#     한국경제TV 이지효입니다.이지효 기자 jhlee@wowtv.co.krⓒ 한국경제TV, 무단 전재 및 재배포 금지
-#     한국경제TV 이주비입니다.이주비 기자 lhs718@wowtv.co.krⓒ 한국경제TV, 무단 전재 및 재배포 금지
-#     임원식기자 ryan@wowtv.co.krⓒ 한국경제TV, 무단 전재 및 재배포 금지
-#     김종학기자 jhkim@wowtv.co.krⓒ 한국경제TV, 무단 전재 및 재배포 금지
-#     디지털 뉴스부ⓒ 한국경제TV, 무단 전재 및 재배포 금지
-#     고영욱기자 yyko@wowtv.co.krⓒ 한국경제TV, 무단 전재 및 재배포 금지
-#     조현석기자 hscho@wowtv.co.krⓒ 한국경제TV, 무단 전재 및 재배포 금지
-    
-    
-    
 
 
+#만족
+def sbsNews(contents, title):
+    contents = contents.split('※ ⓒ SBS & SBS Digital News Lab. : 무단복제 및 재배포 금지')[0]
+    contents = contents.split('(영상취재 :')[0]
+    contents = contents.split('(영상편집 :')[0]
+    contents = contents.split('(사진=')[0]
+    
+    for i in ['<기자>', '<앵커>']:
+        contents = contents.replace(i, '')
+    
+#     email = re.findall(r'([-_\.0-9a-zA-Z]*@wowtv\.co\.kr)', contents)
+    email = re.findall(r'[가-힣 ]{2,}기자\(', contents)
+    if len(email) != 0:
+        print(email)
+        contents = contents.split(email[0])[0]
+    return contents
+
+def gugmin(contents, title):
+    pass
 
 '''
 ※ 필자는 중앙일보 ‘더, 오래팀’ 기획위원이다.
@@ -76,13 +85,14 @@ def han_gyeong(contents, title):
 [정기구독 신청] [콘텐트 구매]
 [ⓒ 이코노미스트(jmagazine.joins.com) and JTBC Content Hub Co., Ltd. 무단 전재 및 재배포 금지]
 '''
+
 extract_contesnt = {'경향신문' : gyeong_hyang,
                     '매일경제' : maeil,
                     '세계일보' : segeu_ilbo,
                     '이코노미스트' : economist,
                     '중앙SUNDAY' : lambda x, y: x+y,   #제외
                     '한국경제TV' : han_gyeong,
-                    'SBS 뉴스' : lambda x, y: x+y,
+                    'SBS 뉴스' : sbsNews,
                     '국민일보' : lambda x, y: x+y,
                     '머니S' : lambda x, y: x+y,
                     '신동아' : lambda x, y: x+y,
