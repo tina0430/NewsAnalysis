@@ -3,15 +3,9 @@ from konlpy.tag import Komoran
 from konlpy.tag import Twitter
 from konlpy.tag import Hannanum
 
-from collections import Counter
-
 import time
 import json
-
-class NLPObject:
-    def __init__(self):
-        pass
-    pass
+from itertools import chain
 
 news1 = '''
 [fn 오후시황]코스피 개인 및 외국인 매도에 2470선으로 밀려
@@ -68,11 +62,13 @@ news2 = '''
 
 def write_list(data, fileobj):
     for i, line in enumerate(data):
+        i += 1
         fileobj.write(line)
-        if i > 0 and i % 5 == 0:
+        if i % 5 == 0:
             fileobj.write('\n')
         else:
             fileobj.write('\t')
+    fileobj.write('\n')
 
 def write_pos(pos_data, fileobj):
     for i, line in enumerate(pos_data):
@@ -91,7 +87,69 @@ def write_pos(pos_data, fileobj):
             fileobj.write('\n')
 #         else:
 #             fileobj.write('  ')
+
+def read_news(newsroute, sep='\n'):
+    with open(newsroute, 'r', encoding='utf-8') as f:
+        jdata = json.loads(f.read())
+
+        news_lines = []
+        for i in range(len(jdata)):
+            news_idx = 'news' + str(i + 1)
+            news_lines.append(jdata[news_idx]['title'])
+            news_lines.append(jdata[news_idx]['contents'])
+        news = sep.join(news_lines)
+    return news
+
+# KoNLP를 실행합니다.
+# news_route : 크롤링한 뉴스 파일 경로
+# nlp_obj : KoNLP 객체 - Twitter, Kkma, Komoran, Hannanum 등
+# bMorphs, bNouns, bPos : morphs(), nouns(), pos() 함수 의 실행 여부
+def run_KoNLP(news_route, nlp_obj, bMorphs = False, bNouns = False, bPos = False):
+    data = read_news(news_route)
+    class_name = nlp_obj.__class__.__name__
+    
+    nlp_func = []
+    write_func = []
+    titles = []
+    if bMorphs:
+        titles.append(class_name + '_morphs\n')
+        nlp_func.append(nlp_obj.morphs)
+        write_func.append(write_list)
         
+    if bNouns:
+        titles.append(class_name + '_nouns\n')
+        nlp_func.append(nlp_obj.nouns)
+        write_func.append(write_list)
+        
+    if bPos:
+        titles.append(class_name + '_pos\n')
+        nlp_func.append(nlp_obj.pos)
+        write_func.append(write_pos)
+    
+    nlp_results = []
+    data_split = data.split('\n')
+    
+    print(class_name, '시작')
+    start_time = time.time()
+    for i in range(len(titles)):
+        words = []
+        for data in data_split:
+            words.append(nlp_func[i](data))
+        nlp_results.append(words)
+    end_time = time.time()
+    print(class_name, '끝 - %s 초' % str(end_time - start_time) )
+
+    # '~/news20180101.json'.split('\\')[-1] : news20180101.json
+    # 'news20180101.json'.split('.')[0] : news20180101
+    knlp_filename = '{}_{}.txt'.format(news_route.split('\\')[-1].split('.')[0],
+                                       class_name)
+    
+    with open(knlp_filename, 'w', encoding = 'utf-8') as fstream:
+        for i in range(len(titles)):
+            fstream.write(titles[i])
+            nlp_words = list(chain.from_iterable(nlp_results[i]))
+            write_func[i](nlp_words, fstream)
+
 def run_kkma(data):
     kkma = Kkma()
     start_time = time.time()
@@ -121,117 +179,13 @@ def run_kkma(data):
         write_list(kkma_sentences, fstream)
         fstream.write('\n')
 
-def run_komoran(data):
-    komoran = Komoran()
-    start_time = time.time()
-    print('komoran 시작')
-    komoran_morphs = komoran.morphs(data)
-    komoran_nouns = komoran.nouns(data)
-    komoran_pos = komoran.pos(data)
-    end_time = time.time()
-    print('komoran 끝 - %s 초' % str(end_time - start_time) )
-    
-    
-    with open('komoran.txt', 'w', encoding = 'utf-8') as fstream:
-        fstream.write('komoran time : %s s\n' % str(end_time - start_time) )
-        fstream.write('komoran_morphs\n')
-        write_list(komoran_morphs, fstream)
-        fstream.write('\n\n')
-        
-        fstream.write('komoran_nouns\n')
-        write_list(komoran_nouns, fstream)
-        fstream.write('\n\n')
-        
-        fstream.write('komoran_pos\n')
-        write_pos(komoran_pos, fstream)
-        fstream.write('\n')
-    
-def  run_twitter(data, bMorphs = False, bNouns = False, bPos = False):
-    twitter = Twitter()
-    start_time = time.time()
-    nlp_func = []
-    write_func = []
-    titles = []
-    if bMorphs:
-        titles.append('twitter' + '_morphs\n')
-        nlp_func.append(twitter.morphs)
-        write_func.append(write_list)
-    if bNouns:
-        titles.append('twitter' + '_nouns\n')
-        nlp_func.append(twitter.nouns)
-        write_func.append(write_list)
-    if bPos:
-        titles.append('twitter' + '_pos\n')
-        nlp_func.append(twitter.pos)
-        write_func.append(write_pos)
-        
-    nlp_results = []
-    print('twitter 시작')
-    for i in range(len(titles)):
-        nlp_results.append(nlp_func[i](data))
-        
-#     twitter_morphs = twitter.morphs(data)
-#     twitter_nouns = twitter.nouns(data)
-#     twitter_pos = twitter.pos(data)
-    end_time = time.time()
-    print('twitter 끝 - %s 초' % str(end_time - start_time) )
-    
-    with open('twitter.txt', 'w', encoding = 'utf-8') as fstream:
-        fstream.write('twitter time : %s s\n' % str(end_time - start_time) )
-#         fstream.write('twitter_morphs\n')
-#         write_list(twitter_morphs, fstream)
-#         fstream.write('\n\n')
-#         
-#         fstream.write('twitter_nouns\n')
-#         write_list(twitter_nouns, fstream)
-#         fstream.write('\n\n')
-#         
-#         fstream.write('twitter_pos\n')
-#         write_pos(twitter_pos, fstream)
-#         fstream.write('\n')
-        for i in range(len(titles)):
-            fstream.write(titles[i])
-            write_func[i](nlp_results[i], fstream)
-            
-
-def run_hannanum(data):
-    hannanum = Hannanum()
-    start_time = time.time()
-    print('hannanum 시작')
-    hannanum_morphs = hannanum.morphs(data)
-    hannanum_nouns = hannanum.nouns(data)
-    hannanum_pos = hannanum.pos(data)
-    end_time = time.time()
-    print('hannanum 끝 - %s 초' % str(end_time - start_time) )
-    
-    with open('hannanum.txt', 'w', encoding = 'utf-8') as fstream:
-        fstream.write('hannanum time : %s s\n' % str(end_time - start_time) )
-        fstream.write('hannanum_morphs\n')
-        write_list(hannanum_morphs, fstream)
-        fstream.write('\n\n')
-        
-        fstream.write('hannanum_nouns\n')
-        write_list(hannanum_nouns, fstream)
-        fstream.write('\n\n')
-        
-        fstream.write('hannanum_pos\n')
-        write_pos(hannanum_pos, fstream)
-        fstream.write('\n')
-        
-
 
 if __name__ == '__main__':
-    news_route = r'C:\Users\acorn\Downloads\news20180323.json'
-    with open(news_route, 'r', encoding='utf-8') as f:
-        jdata = json.load(f)
-        cnt = len(jdata)
-        news = ''
-        for i in range(1, cnt-1):
-            news += jdata['news'+str(i+1)]['title'] + ' '
-            news += jdata['news'+str(i+1)]['contents'] + ' '
+    news_route = 'news_20180113.json'
+    #news_route = r'C:\Users\acorn\Downloads\news20180223.json'
     
-    #run_kkma(news)
-    #run_komoran(news2)
-    #run_hannanum(news2)
-    #run_twitter(news2, bNouns = True)
-    run_twitter(news, bNouns=True)
+    run_KoNLP(news_route, Twitter(), bNouns = True)
+    run_KoNLP(news_route, Komoran(), bNouns = True)
+    run_KoNLP(news_route, Hannanum(), bNouns = True)
+    run_KoNLP(news_route, Kkma(), bNouns = True)
+    
