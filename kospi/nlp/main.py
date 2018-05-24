@@ -11,13 +11,6 @@ from datetime import datetime
 import itertools
 import multiprocessing
 
-def get_settings(settings_route):
-    df = pandas.read_csv('settings.csv', header = None)
-    trans_df = df.transpose()
-    settings = trans_df.rename(columns=df[:][0]).drop(0).reset_index(drop=True)
-
-    return settings
-
 def get_newsname(news_route):
     return news_route.split('\\')[-1].split('.')[0]
 
@@ -48,6 +41,7 @@ class News():
         self.nouns = None
         self.counts = None
         self.result = None
+        self.process_log = None
         
     def write_result(self, route = None):
         if self.result is None:
@@ -65,6 +59,7 @@ class News():
     def news_process(self):
         Settings.settings('settings.csv')
         start_read_news = time.time()
+
         self.news = knlp.read_news(self.route)
         end_read_news = time.time()
         
@@ -102,11 +97,8 @@ class News():
                                                                      self.name,
                                                                      str(end_filter - start_filter))
         print(log_filter)
-        
+        self.process_log = '\n'.join([log_read_news, log_nouns, log_count, log_filter])
         self.write_result(Settings.result_route)
-        
-        with open('log_' + str(datetime.now().strftime('%Y%m%d_%Hh-%Mm-%Ss')) +'.txt', 'w', encoding='utf-8') as fw:
-            fw.write('\n'.join([log_read_news, log_nouns, log_count, log_filter]))
             
 
 def get_news_file_list(folder_route):
@@ -128,6 +120,7 @@ def run_News(news_object):
         return None
     
     news_object.news_process()
+    return news_object
 
 if __name__ == '__main__':
     # news list
@@ -137,7 +130,10 @@ if __name__ == '__main__':
     # run counting
     # run filtering
     
-    print('start works - number of cpu :', os.cpu_count())
+    log_start_main = '{} start works - number of cpu : {}, working core : {}'.format(str(datetime.now().strftime('%Y%m%d %H:%M:%S')),
+                                                                                       str(os.cpu_count()),
+                                                                                       str(os.cpu_count() - 1))
+    print(log_start_main)
     start = time.time()
     
     Settings.settings('settings.csv')
@@ -152,39 +148,31 @@ if __name__ == '__main__':
     for route in news_routes:
         news_list.append(News(route))
 
+        # 멀티
     pool = multiprocessing.Pool(os.cpu_count() - 1)
-    pool.map(run_News, news_list)
+    news_list = pool.map(run_News, news_list)
     pool.close()
     pool.join()
 
-
-#     i = 0
+        # 싱글
 #     for news in news_list:
-#         i += 1
-#         start_read_news = time.time()
-#         news.news = knlp.read_news(news.route)
-#         end_read_news = time.time()
-#         print('{} - read_news() - {}'.format(news.name, str(end_read_news - start_read_news)))
-#          
-#         start_konlpy = time.time()
-#         news.nouns = knlp.get_KoNLP(news.news, Settings.konlp_class, Settings.konlp_function)
-#         news.nouns = list(itertools.chain.from_iterable(news.nouns))
-#         end_konlp = time.time()
-#         print('{} - Twitter.nouns() - {}'.format(news.name, str(end_konlp - start_konlpy)))
-# 
-#         start_count = time.time()
-#         count_data = count.get_unique_count(news.nouns)
-#         news.counts = pandas.DataFrame({'word':list(count_data.keys()), 'count':list(count_data.values())})
-#         news.counts = news.counts.sort_index(axis = 1, ascending  = False)
-#         end_count = time.time()
-#         print('{} - count.get_unique_count() - {}'.format(news.name, str(end_count - start_count)))
-#          
-#         start_filter = time.time()
-#         news.result = filter.filter_count(news.counts, Settings.filter_route)
-#         print(news.result.head())
-#         end_filter = time.time()
-#         print('{} - filter.filter_count() - {}'.format(news.name, str(end_filter - start_filter)))
-#          
-#         news.write_result(Settings.result_route)
+#         news.news_process()
 
-    print('end works - {} sec.'.format(str(time.time() - start)))
+    log_end_main = '{} end works - {} sec.'.format(str(datetime.now().strftime('%Y%m%d %H:%M:%S')),
+                                                   str(time.time() - start))
+    print(log_end_main)
+    
+    with open('log_' + str(datetime.now().strftime('%Y%m%d_%Hh-%Mm-%Ss')) +'.txt', 'w', encoding='utf-8') as fw:
+        news_log = []
+        news_log.append(log_start_main)
+        
+        for news in news_list:
+            item_log = news.process_log
+            if item_log == None:
+                item_log = 'None'
+            news_log.append(item_log)
+            
+        news_log.append(log_end_main)
+        final_log = '\n'.join(news_log)
+        
+        fw.write(final_log)
