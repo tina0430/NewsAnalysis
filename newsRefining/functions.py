@@ -465,26 +465,30 @@ def mbcNews(contents, title):
     title = title[0] if len(title) == 1 else title[1]
     
     return [contents.strip(), title.strip()]
-    
-#이미정기자 lmj0919@//이미정
-#김민수기자 minsu@//김민수
-#[디지털타임스 강해령 기자] ~~~ 강해령기자 strong@//강해령
-#황병서기자 bshwang@dt.co.kr//황병서
-#세종=권대경기자 kwon213@//권대경
-#cskim@dt.co.kr//인터넷 마케팅팀
+
 #KB금융지주 제공//
+#김민수기자 min/김민수
 def digitalTimes(contents, title):
+    for i in ('[부고]', '[인사]'):
+        if title.rfind(i) != -1:
+            contents = ''
     
     writer = re.findall(r'\[디지털타임스[ 가-힣]+\]', contents)
     if len(writer) != 0:
         print(writer)
         contents = contents.replace(writer[0], '').strip()
         
-    writer_email = re.findall(r'[ =가-힣]*기자 [a-zA-Z0-9\.]+@[a-zA-Z0-9\.\)]*//[가-힣]+', contents)
+    writer_email = re.findall(r'[ =가-힣]*기자 [a-zA-Z0-9\.]+@[a-zA-Z0-9\.\)]*[/]+[가-힣]+', contents)
     if len(writer_email) != 0:
         print(writer_email)
         contents = contents.split(writer_email[0])[0]
 
+    email = re.findall(r'[a-zA-Z0-9\.]+@[a-zA-Z0-9\.\)]*[/]+[가-힣]+', contents)
+    if len(email) != 0:
+        print(email)
+        contents = contents.split(email[0])[0]
+
+    contents = contents.split('/인터넷 마케팅팀')[0]
     return [contents.strip(), title.strip()]
 
 refin_funcs = {'경향신문' : kyunghyang,

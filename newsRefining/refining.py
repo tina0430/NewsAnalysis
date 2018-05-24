@@ -2,7 +2,7 @@ import json
 from newsRefining.functions import refin_funcs 
 news = ''
 
-with open('./news_20171231.json', 'r', encoding='utf-8') as f:
+with open('./news_20180302.json', 'r', encoding='utf-8') as f:
     jdata = json.load(f)
     cnt = len(jdata)
 
