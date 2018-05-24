@@ -472,6 +472,7 @@ def mbcNews(contents, title):
 #황병서기자 bshwang@dt.co.kr//황병서
 #세종=권대경기자 kwon213@//권대경
 #cskim@dt.co.kr//인터넷 마케팅팀
+#KB금융지주 제공//
 def digitalTimes(contents, title):
     
     writer = re.findall(r'\[디지털타임스[ 가-힣]+\]', contents)
@@ -479,7 +480,7 @@ def digitalTimes(contents, title):
         print(writer)
         contents = contents.replace(writer[0], '').strip()
         
-    writer_email = re.findall(r'[ =가-힣]+[a-zA-Z0-9\.]+@[a-zA-Z0-9\.\)]*//[가-힣]+', contents)
+    writer_email = re.findall(r'[ =가-힣]*기자 [a-zA-Z0-9\.]+@[a-zA-Z0-9\.\)]*//[가-힣]+', contents)
     if len(writer_email) != 0:
         print(writer_email)
         contents = contents.split(writer_email[0])[0]
