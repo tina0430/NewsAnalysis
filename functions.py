@@ -267,6 +267,10 @@ def money_today(contents, title):
     return [contents.strip(), title.strip()]
 
 #[인사] -> 내용 삭제
+#[아시아경제 문채석 기자] ~~~ 문채석 기자 chaeso@asiae.co.kr
+#[아시아경제 이광호 기자] ~~~ 세종=이광호 기자 kwang@asiae.co.kr
+#김정혁 기자 mail00@asiae.co.kr
+#다음은 오후 6시 기준 오늘의 아경 뉴스 Top10 입니다.1위2위3위4위5위6위7위8위9위10위도 많이 읽어주세요.아경봇 기자 r2@asiae.co.kr
 def asiae(contents, title):
     return [contents.strip(), title.strip()]
 
