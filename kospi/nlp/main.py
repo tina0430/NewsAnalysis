@@ -67,12 +67,10 @@ class News():
         self.news = knlp.read_news(self.route)
         end_read_news = time.time()
         
-        log_string = ''
-        
-        log_string += 
-        print('os{} : {} - read_news() - {}'.format(os.getpid(),
-                                                    self.name,
-                                                    str(end_read_news - start_read_news)))
+        log_read_news = 'os{} : {} - read_news() - {}'.format(os.getpid(),
+                                                            self.name,
+                                                            str(end_read_news - start_read_news))
+        print(log_read_news)
         
         start_konlpy = time.time()
         self.nouns = knlp.get_KoNLP(self.news, Settings.konlp_class, Settings.konlp_function)
