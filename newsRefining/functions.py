@@ -10,7 +10,7 @@ def kyunghyang(contents, title):
     title = title[0] if len(title) == 1 else title[1]
     return [contents.strip(), title.strip()]
 
-def maeil(contents, title):
+def maeile(contents, title):
     contents = contents.split('[')[0]
     title = title.split(']')
     title = title[0] if len(title) == 1 else title[1]
@@ -491,8 +491,55 @@ def digitalTimes(contents, title):
     contents = contents.split('/인터넷 마케팅팀')[0]
     return [contents.strip(), title.strip()]
 
+#contents [서울경제][서울경제TV] [앵커][기자][인터뷰]
+#/정창신기자 csjung@sedaily.com[영상편집 김지현]저작권자 ⓒ 서울경제, 무단 전재 및 재배포 금지
+#/세종=임진혁기자 liberal@sedaily.com저작권자 ⓒ 서울경제, 무단 전재 및 재배포 금지
+#/권욱기자저작권자 ⓒ 서울경제, 무단 전재 및 재배포 금지
+#/김우보·김상훈기자 ubo@sedaily.com저작권자 ⓒ 서울경제, 무단 전재 및 재배포 금지
+#저작권자 ⓒ 서울경제, 무단 전재 및 재배포 금지
+def seoule(contents, title):
+    #title 수정 좀더 고민하기 특히 한문
+    remove = ['[서울경제]', '[서울경제TV]', '[투데이포커스]', '[표]', '[S머니]', '[이슈&워치]','[금주의 분양캘린더]']
+    for i in remove:
+        contents = contents.replace(i, '')
+    remove = ['[서울경제]', '[서울경제TV]', '[서울경제 디센터]', '[앵커]', '[기자]', '[인터뷰]']
+    for i in remove:
+        contents = contents.replace(i, '')
+    
+    contents = contents.split('[이 기사는 증시분석 전문기자 서경뉴스봇(newsbot@sedaily.com)이 실시간으로 작성했습니다.]')[0]
+        
+    writer = re.findall(r'/[ 가-힣=·]+[a-zA-Z0-9\._@]*저작권자', contents)
+    if len(writer) != 0:
+        print(writer)
+        contents = contents.split(writer[0])[0]
+    
+    contents = contents.split('[사진=')[0]
+    contents = contents.split('저작권자 ⓒ 서울경제, 무단 전재 및 재배포 금지')[0]
+    
+    title.split('오늘의 증시 메모')
+    if len(title) != 0:
+        title = '오늘의 증시 메모'
+    
+    title = title.split(']')
+    title = title[0] if len(title) == 1 else title[1]
+    return [contents.strip(), title.strip()]
+    
+def ytnTV(contents, title):
+    for i in ('[기자]' ,'[앵커]', '[비즈&]', '[특별기획]', '[기업기상도]'):
+        contents = contents.replace(i, '')
+    announcer = re.findall('[ 가-힣]*연합뉴스TV [가-힣]+입니다.', contents)
+    if len(announcer) != 0:
+        print(announcer)
+        contents = contents.split(announcer[0])[0]
+        
+    contents = contents.split('연합뉴스TV : 02')[0]
+    
+    title = title.split(']')
+    title = title[0] if len(title) == 1 else title[1]
+    return [contents.strip(), title.strip()]
+    
 refin_funcs = {'경향신문' : kyunghyang,
-               '매일경제' : maeil,
+               '매일경제' : maeile,
                '세계일보' : segye,
                '이코노미스트' : economist,
                '중앙SUNDAY' : lambda x, y: x+y,   #제외
@@ -518,8 +565,8 @@ refin_funcs = {'경향신문' : kyunghyang,
                '한겨레' : hani,
                'MBC 뉴스' : mbcNews,
                '디지털타임스' : digitalTimes,
-               '서울경제' : lambda x, y: x+y,
-               '연합뉴스TV' : lambda x, y: x+y,
+               '서울경제' : seoule,
+               '연합뉴스TV' : ytnTV,
                '주간경향' : lambda x, y: x+y,
                '한경비즈니스' : lambda x, y: x+y,
                'MBN' : lambda x, y: x+y,
