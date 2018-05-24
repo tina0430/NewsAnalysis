@@ -1,0 +1,5 @@
+news_folder,C:\Users\acorn\Documents\drive-download-20180524T004330Z-001\201802
+filter_dictionary,C:\Users\acorn\eclipse-workspace\kospi\nlp\filter_dictionary.xlsx
+konlp_engine,Twitter
+konlp_function,nouns
+result_folder,C:\Users\acorn\Documents\kospi_result\201802
