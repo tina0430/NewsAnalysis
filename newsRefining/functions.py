@@ -4,7 +4,7 @@ import re
 # 데코레이터
 # 기자이름 저장
 
-def gyeong_hyang(contents, title):
+def kyunghyang(contents, title):
     contents = contents.split('▶')[0]
     title = title.split(']')
     title = title[0] if len(title) == 1 else title[1]
@@ -16,7 +16,7 @@ def maeil(contents, title):
     title = title[0] if len(title) == 1 else title[1]
     return [contents.strip(), title.strip()]
 
-def segeu_ilbo(contents, title):
+def segye(contents, title):
     sp = re.findall('[.][가-힣]{0,2}[=]?[가-힣]{2,} [가-힣]*기자', contents)
     if len(sp) != 0:
         contents = contents.split(sp[0])[0] + '.'  
@@ -172,7 +172,7 @@ def joongang(contents, title):
 
 #신상순[ⓒ 한국일보(), 무단 전재 및 재배포 금지]
 #그럭저럭
-def hankookilbo(contents, title):
+def hankook(contents, title):
     writer_email = re.findall(r'[가-힣 = ]+[0-9A-Za-z\.]+@hankookilbo.com\[ⓒ 한국일보', contents)
     if len(writer_email) != 0:
         print(writer_email)
@@ -246,18 +246,17 @@ def newsis(contents, title):
 #송지유 기자 clio@, 박진영 기자 jyp@, 배영윤 기자 young25@mt.co.kr
 #[머니투데이 송지유 기자, 박진영 기자, 배영윤 기자]
 
-def money_today(contents, title):
+def moneyToday(contents, title):
 #     [표]
     writer = re.findall(r'\[머니투데이[ 가-힣 \(\)=,?&?]+\]', contents)
     if len(writer) != 0:
-        print(writer)
         contents = contents.replace(writer[0], '').strip()
         for i in ('[머니투데이', ']'):
             writer[0] = writer[0].replace(i, '').strip()
-            writers = writer[0].split(',')
+        writers = writer[0].split(',')
             
-            if len(writers) != 0:
-                writer[0] = writers[0].strip()
+        if len(writers) != 0:
+            writer[0] = writers[0].strip()
                 
         contents = contents.split(writer[0])[0]
         
@@ -266,17 +265,230 @@ def money_today(contents, title):
     
     return [contents.strip(), title.strip()]
 
-#[인사] -> 내용 삭제
-#[아시아경제 문채석 기자] ~~~ 문채석 기자 chaeso@asiae.co.kr
+#
 #[아시아경제 이광호 기자] ~~~ 세종=이광호 기자 kwang@asiae.co.kr
-#김정혁 기자 mail00@asiae.co.kr
-#다음은 오후 6시 기준 오늘의 아경 뉴스 Top10 입니다.1위2위3위4위5위6위7위8위9위10위도 많이 읽어주세요.아경봇 기자 r2@asiae.co.kr
+
 def asiae(contents, title):
+    for i in ('[부고]', '[인사]'): #'아시아경제 오늘의 뉴스'
+        if title.rfind(i) != -1:
+            contents = ''
+    writer = re.findall(r'\[[ 가-힣=\]*아시아경제[ 가-힣=]+\]', contents)
+    if len(writer) != 0:
+        contents = contents.replace(writer[0], '').strip()
+        for i in ('[', '아시아경제 ','아시아경제', ']'):
+            writer[0] = writer[0].replace(i, '').strip()
+        contents = contents.split(writer[0])[0]
+        
+    writer = re.findall(r'[ =가-힣]+[a-zA-Z0-9\.]+@[a-zA-Z0-9\.]*', contents)
+    
+    if len(writer) != 0:
+        print(writer)
+        contents = contents.replace(writer[0], '').strip()
+        
+    bot = re.findall('다음은[가-힣0-9 ]+기준 오늘의[ 가-힣\-]+Top10 입니다.', contents)
+    if len(bot) != 0:
+        print(bot)
+        contents = contents.split(bot[0])[0]
+    
+    title = title.split(']')
+    title = title[0] if len(title) == 1 else title[1]
+    
     return [contents.strip(), title.strip()]
 
-extract_contesnt = {'경향신문' : gyeong_hyang,
+#만족
+def chosun(contents, title):
+    contents = contents.split('[][]- Copyrights ⓒ 조선일보 & chosun.com, 무단 전재 및 재배포 금지 -')[0]
+    contents = contents.split('[')[0]
+  
+    title = title.split(']')
+    title = title[0] if len(title) == 1 else title[1]
+    
+    return [contents.strip(), title.strip()]
+
+# ※ 저작권자 ⓒ. 무단 전재-재배포 금지
+#크롤링시에 따로 가져오는거 만들어야한당
+def financialNews(contents, title):
+    contents = contents.replace('※ 저작권자 ⓒ. 무단 전재-재배포 금지', '')
+    
+    title = title.split(']')
+    title = title[0] if len(title) == 1 else title[1]
+    
+    return [contents.strip(), title.strip()]
+
+#[인사]
+#조갑천- Copyrights ⓒ 헤럴드경제 & heraldbiz.com, 무단 전재 및 재배포 금지 -
+def herald(contents, title):
+    if title.rfind('[인사]') != -1:
+        contents = ''
+    contents = contents.replace('(본 기사는 헤럴드경제로부터 제공받은 기사입니다.)', '')
+    #［ [
+    writer = re.findall(r'\[헤럴드경제=[ 가-힣]+\]', contents)
+    if len(writer) != 0:
+        contents = contents.replace(writer[0], '').strip()
+        
+    writer = re.findall(r'［헤럴드경제=[ 가-힣]+］', contents)
+    if len(writer) != 0:
+        contents = contents.replace(writer[0], '').strip()
+        
+    writer_email = re.findall(r'[가-힣]+ 기자/[ a-zA-Z0-9\.]+@[ a-zA-Z0-9\.]*- Copyrights', contents)
+    if len(writer_email) != 0:
+        contents = contents.split(writer_email[0])[0]
+    
+    email = re.findall(r'[a-zA-Z0-9\.]+@[ a-zA-Z0-9\.]*- Copyrights', contents)
+    if len(email) != 0:
+        contents = contents.split(email[0])[0]
+    
+    contents = contents.split('- Copyrights ⓒ 헤럴드경제')[0]
+    title = title.split(']')
+    title = title[0] if len(title) == 1 else title[1]
+
+    return [contents.strip(), title.strip()]
+
+#프놈펜=김성규 기자 sunggyu@donga.comⓒ 동아일보 & donga.com, 무단 전재 및 재배포 금지
+#세종=김준일 기자 jikim@donga.comⓒ 동아일보 & donga.com, 무단 전재 및 재배포 금지
+#[동아일보] 황태호 기자 taeho@donga.comⓒ 동아일보 & donga.com, 무단 전재 및 재배포 금지
+#동아닷컴 이은정 기자 ejlee@donga.comⓒ 동아일보 & donga.com, 무단 전재 및 재배포 금지
+#서형석 기자 skytree08@donga.comⓒ 동아일보 & donga.com, 무단 전재 및 재배포 금지
+#ⓒ 동아일보 & donga.com, 무단 전재 및 재배포 금지
+#김진영 연세대 의대 의학교육학과 교수 kimjin@yuhs.ac·정리=이미영 기자 mylee03@donga.comⓒ 동아일보 & donga.com, 무단 전재 및 재배포 금지
+def donga(contents, title):
+    writer = re.findall('[ 가-힣=]+[a-zA-Z0-9\.]+@donga.com', contents)
+    if len(writer) != 0:
+        print(writer)
+        contents = contents.split(writer[0])[0]
+        
+    contents = contents.replace('[동아일보]', '')
+    contents = contents.replace('ⓒ 동아일보 & donga.com, 무단 전재 및 재배포 금지', '')
+
+    title = title.split(']')
+    title = title[0] if len(title) == 1 else title[1]
+
+    return [contents.strip(), title.strip()]
+
+#방승배·이관범·김윤림 기자 bsb@munhwa.com[Copyrightⓒmunhwa.com '대한민국 오후를 여는 유일석간 문화일보' 무단 전재 및 재배포 금지()]
+#박민철·김성훈 기자 mindom@munhwa.com[Copyrightⓒmunhwa.com '대한민국 오후를 여는 유일석간 문화일보' 무단 전재 및 재배포 금지()]
+#김윤림 기자 bestman@[Copyrightⓒmunhwa.com '대한민국 오후를 여는 유일석간 문화일보' 무단 전재 및 재배포 금지()]
+def munhwa(contents, title):
+    writer = re.findall('[ 가-힣=·]+[a-zA-Z0-9\.]+@', contents)
+    if len(writer) != 0:
+        print(writer)
+        contents = contents.split(writer[0])[0]
+    contents = contents.replace("[Copyrightⓒmunhwa.com '대한민국 오후를 여는 유일석간 문화일보' 무단 전재 및 재배포 금지()]", '')
+
+    return [contents.strip(), title.strip()]
+    
+#(종합)
+#[부고][인사]
+#(영종도=연합뉴스) 이지은 기자 = ~~~ jieunlee@yna.co.kr
+#(서울=연합뉴스) 이태수 기자 = ~~~ tsl@yna.co.kr
+#(서울=연합뉴스) 박의래 기자 = ~~~ laecorp@yna.co.kr
+#※ 자료 :
+def yna(contents, title):
+    for i in ('[부고]', '[인사]'):
+        if title.rfind(i) != -1:
+            contents = ''
+    title = title.replace('(종합)', '')
+    contents = contents.split('※ 자료 :')[0]
+    
+    writer = re.findall(r'\([가-힣]+=연합뉴스\)[ 가-힣]+기자 =', contents)
+    if len(writer) != 0:
+        contents = contents.replace(writer[0], '')
+        
+    location = re.findall(r'\([가-힣]+=연합뉴스\)', contents)
+    if len(location) != 0:
+        contents = contents.replace(location[0], '')
+    
+    email = re.findall(r'[a-zA-Z0-9\.]+@yna.co.kr', contents)  
+    if len(email) != 0:
+        print(email)
+        contents = contents.replace(email[0], '')  
+    
+    return [contents.strip(), title.strip()]
+
+
+#[인사]
+#▶▶박지환(pjh@joseilbo.com)저작권자 ⓒ 조세일보(http://www.joseilbo.com). 무단전재 및 재배포 금지
+def jose(contents, title):
+    for i in ('[부고]', '[인사]'):
+        if title.rfind(i) != -1:
+            contents = ''
+    contents = contents.split('▶▶')[0]
+    contents = contents.split('저작권자 ⓒ 조세일보(http://www.joseilbo.com). 무단전재 및 재배포 금지')[0]
+    
+    title = title.split(']')
+    title = title[0] if len(title) == 1 else title[1]
+    
+    return [contents.strip(), title.strip()]
+    
+#[한겨레] ~~~ 이정국 기자 jglee@hani.co.kr▶ 한겨레 절친이 되어 주세요![ⓒ한겨레신문 : 무단전재 및 재배포 금지]
+#▶ 한겨레 절친이 되어 주세요![ⓒ한겨레신문 : 무단전재 및 재배포 금지]
+def hani(contents, title):
+    for i in ('[부고]', '[인사]'):
+        if title.rfind(i) != -1:
+            contents = ''
+            
+    writer = re.findall(r'[ 가-힣]+[a-zA-Z0-9\.]+@hani.co.kr▶', contents)
+    if len(writer) != 0:
+        contents = contents.split(writer[0])[0]
+    contents = contents.split('▶ 한겨레 절친이 되어 주세요')[0]
+    contents = contents.replace('[한겨레]', '')
+    
+    title = title.split(']')
+    title = title[0] if len(title) == 1 else title[1]
+    
+    return [contents.strip(), title.strip()]
+#[날씨]~~~[뉴스투데이][정오뉴스]~~~이창민 캐스터[저작권자(c) MBC (http://imnews.imbc.com) 무단복제-재배포 금지]Copyright(c) Since 1996,&All rights reserved.
+#김재경 기자 (samana80@naver.com)[저작권자(c) MBC (http://imnews.imbc.com) 무단복제-재배포 금지]Copyright(c) Since 1996,&All rights reserved.
+#◀ 앵커 ▶◀ 캐스터 ▶◀ 리포트 ▶
+
+def mbcNews(contents, title):
+    remove = ['◀ 앵커 ▶','◀ 캐스터 ▶','◀ 리포트 ▶','[뉴스데스크]','[뉴스투데이]','[뉴스콘서트]', '[정오뉴스]', '[이브닝뉴스]', '▶ ', 
+              '날씨였습니다.', '지금까지 스마트리빙이었습니다.', '지금까지 스마트 리빙이었습니다.', '지금까지 스마트리빙플러스였습니다.']
+    for i in remove:
+        contents = contents.replace(i, '')
+    
+    announcer = re.findall('[ 가-힣]*MBC뉴스 [가-힣]+입니다.', contents)
+    if len(announcer) != 0:
+        print(announcer)
+        contents = contents.split(announcer[0])[0]
+        
+    writer = re.findall(r'[ 가-힣/]+\[저작권자\(c\)', contents)
+    if len(writer) != 0:
+        contents = contents.split(writer[0])[0]
+        
+    writer_email = re.findall(r'[ 가-힣]+[\(a-zA-Z0-9\.]+@[a-zA-Z0-9\.\)]+\[저작권자\(c\)', contents)
+    if len(writer_email) != 0:
+        contents = contents.split(writer_email[0])[0]
+    
+    contents = contents.split('[저작권자(c) MBC')[0]    
+    title = title.split(']')
+    title = title[0] if len(title) == 1 else title[1]
+    
+    return [contents.strip(), title.strip()]
+    
+#이미정기자 lmj0919@//이미정
+#김민수기자 minsu@//김민수
+#[디지털타임스 강해령 기자] ~~~ 강해령기자 strong@//강해령
+#황병서기자 bshwang@dt.co.kr//황병서
+#세종=권대경기자 kwon213@//권대경
+#cskim@dt.co.kr//인터넷 마케팅팀
+def digitalTimes(contents, title):
+    
+    writer = re.findall(r'\[디지털타임스[ 가-힣]+\]', contents)
+    if len(writer) != 0:
+        print(writer)
+        contents = contents.replace(writer[0], '').strip()
+        
+    writer_email = re.findall(r'[ =가-힣]+[a-zA-Z0-9\.]+@[a-zA-Z0-9\.\)]*//[가-힣]+', contents)
+    if len(writer_email) != 0:
+        print(writer_email)
+        contents = contents.split(writer_email[0])[0]
+
+    return [contents.strip(), title.strip()]
+
+refin_funcs = {'경향신문' : kyunghyang,
                     '매일경제' : maeil,
-                    '세계일보' : segeu_ilbo,
+                    '세계일보' : segye,
                     '이코노미스트' : economist,
                     '중앙SUNDAY' : lambda x, y: x+y,   #제외
                     '한국경제TV' : han_gyeong,
@@ -286,21 +498,21 @@ extract_contesnt = {'경향신문' : gyeong_hyang,
                     '신동아' : sindonga,
                     '조선비즈' : chosunbiz,
                     '중앙일보' : joongang,
-                    '한국일보' : hankookilbo,
+                    '한국일보' : hankook,
                     'YTN' : ytn,
                     '뉴시스' : newsis,
-                    '머니투데이' : money_today,
+                    '머니투데이' : moneyToday,
                     '아시아경제' : asiae,
-                    '조선일보' : lambda x, y: x+y,
-                    '파이낸셜뉴스' : lambda x, y: x+y,
-                    '헤럴드경제' : lambda x, y: x+y,
-                    '동아일보' : lambda x, y: x+y,
-                    '문화일보' : lambda x, y: x+y,
-                    '연합뉴스' : lambda x, y: x+y,
-                    '조세일보' : lambda x, y: x+y,
-                    '한겨레' : lambda x, y: x+y,
-                    'MBC 뉴스' : lambda x, y: x+y,
-                    '디지털타임스' : lambda x, y: x+y,
+                    '조선일보' : chosun,
+                    '파이낸셜뉴스' : financialNews,
+                    '헤럴드경제' : herald,
+                    '동아일보' : donga,
+                    '문화일보' : munhwa,
+                    '연합뉴스' : yna,
+                    '조세일보' : jose,
+                    '한겨레' : hani,
+                    'MBC 뉴스' : mbcNews,
+                    '디지털타임스' : digitalTimes,
                     '서울경제' : lambda x, y: x+y,
                     '연합뉴스TV' : lambda x, y: x+y,
                     '주간경향' : lambda x, y: x+y,
