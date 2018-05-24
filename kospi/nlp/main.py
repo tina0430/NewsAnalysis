@@ -6,6 +6,7 @@ import os
 import re
 import pandas
 import time
+from datetime import datetime
 
 import itertools
 import multiprocessing
@@ -76,27 +77,36 @@ class News():
         self.nouns = knlp.get_KoNLP(self.news, Settings.konlp_class, Settings.konlp_function)
         self.nouns = list(itertools.chain.from_iterable(self.nouns))
         end_konlp = time.time()
-        print('os{} : {} - Twitter.nouns() - {}'.format(os.getpid(),
-                                                        self.name,
-                                                        str(end_konlp - start_konlpy)))
+        
+        log_nouns = 'os{} : {} - Twitter.nouns() - {}'.format(os.getpid(),
+                                                              self.name,
+                                                              str(end_konlp - start_konlpy))
+        print(log_nouns)
 
         start_count = time.time()
         count_data = count.get_unique_count(self.nouns)
         self.counts = pandas.DataFrame({'word':list(count_data.keys()), 'count':list(count_data.values())})
         self.counts = self.counts.sort_index(axis = 1, ascending  = False)
         end_count = time.time()
-        print('os{} : {} - count.get_unique_count() - {}'.format(os.getpid(),
-                                                                 self.name,
-                                                                 str(end_count - start_count)))
+        
+        log_count = 'os{} : {} - count.get_unique_count() - {}'.format(os.getpid(),
+                                                                       self.name,
+                                                                       str(end_count - start_count))
+        print(log_count)
         
         start_filter = time.time()
         self.result = filter.filter_count(self.counts, Settings.filter_route)
         end_filter = time.time()
-        print('os{} : {} - filter.filter_count() - {}'.format(os.getpid(),
-                                                              self.name,
-                                                              str(end_filter - start_filter)))
+        
+        log_filter = 'os{} : {} - filter.filter_count() - {}'.format(os.getpid(),
+                                                                     self.name,
+                                                                     str(end_filter - start_filter))
+        print(log_filter)
         
         self.write_result(Settings.result_route)
+        
+        with open('log_' + str(datetime.now().strftime('%Y%m%d_%Hh-%Mm-%Ss')) +'.txt', 'w', encoding='utf-8') as fw:
+            fw.write('\n'.join([log_read_news, log_nouns, log_count, log_filter]))
             
 
 def get_news_file_list(folder_route):
