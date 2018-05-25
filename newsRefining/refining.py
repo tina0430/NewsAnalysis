@@ -1,5 +1,5 @@
 import json
-from newsRefining.functions import refin_funcs 
+from newsRefining.functions import refin
 
 news = ''
 
@@ -9,16 +9,20 @@ with open('./news_20180523.json', 'r', encoding='utf-8') as f:
 
     for i in range(1, cnt + 1):
         press = jdata['news' + str(i)]['press']
-        if press == 'MBN':
+        
+        if press == '경향신문':
             title = jdata['news' + str(i)]['title']
             contents = jdata['news' + str(i)]['contents']
+            
             print(title)
             print(contents)
-            news = refin_funcs[press](contents, title)
+            
+#             news = refin_funcs[press](contents, title)
+            news = refin(press, title, contents)
             jdata['news' + str(i)]['contents'] = news[0]
             jdata['news' + str(i)]['title'] = news[1]
             print(jdata['news' + str(i)]['title'])
             print(jdata['news' + str(i)]['contents'])
-            print("="*300)
+            print("="*400)
 
 #     f.write()        
