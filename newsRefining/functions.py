@@ -1,25 +1,8 @@
-
 import re 
 
 # 기자이름 저장?
 # patterns 순서 대빵 중요
-# patterns_kyunghyang = namedtuple('title', 'contents')
-patterns_kyunghyang = (((r'\]', 2),), (('▶', 1),))
-patterns_maeile = (((r'\]', 2),), ((r'\[', 1),))
-patterns_mbn = (((r'\]', 2),),
-                (('【 앵커멘트 】', 0), ('【 기자 】', 0), (r'▶[ 가-힣\(☎\)]+:[ /가-힣\'-]*-', 0), (r'\[[ 가-힣]+/[ a-zA-Z0-9@\._]+\]', 1), 
-                 (r'[a-zA-Z0-9\._]+@[a-zA-Z0-9\._]', 1), (r'MBN[ ]?뉴스[ 가-힣]+입니다\.', 1), (r'\[MBN 온라인 뉴스팀\]', 1), 
-                 (r'\[MBN 온라인뉴스팀\]', 1), ('< Copyright', 1)))
-def kyunghyang(title, contents):
-    contents = contents.split('▶')[0]
-    title = title.split(']')
-    title = title[0] if len(title) == 1 else title[1]
-    return [title.strip(), contents.strip()]
-def maeile(title, contents):
-    contents = contents.split('[')[0]
-    title = title.split(']')
-    title = title[0] if len(title) == 1 else title[1]
-    return [title.strip(), contents.strip()]
+
 def segye(title, contents):
     sp = re.findall('[.][가-힣]{0,2}[=]?[가-힣]{2,} [가-힣]*기자', contents)
     if len(sp) != 0:
@@ -566,34 +549,12 @@ def hanGyeongbiz(title, contents):
 
 #[MBN스타=김승진 기자]
 def mbn(title, contents):
-#     for i in ['【 앵커멘트 】', '【 기자 】']:
-#         contents = contents.replace(i, '')
-#         
-#     talker = re.findall('▶[ 가-힣\(☎\)]+:[ /가-힣\'-]*-', contents)
-#     if len(talker) != 0:
-#         for i in talker:
-#             contents = contents.replace(i, '')
-#     
-#     writer = re.findall(r'\[[ 가-힣]+/[ a-zA-Z0-9@\._]+\]', contents)
-#     if len(writer) != 0:    contents = contents.split(writer[0])[0]
-#     
-#     email = re.findall(r'[a-zA-Z0-9\._]+@[a-zA-Z0-9\._]', contents)
-#     if len(email) != 0:    contents = contents.split(email[0])[0]
-#  
-#     announcer = re.findall('MBN[ ]?뉴스[ 가-힣]+입니다.', contents)
-#     if len(announcer) != 0:    contents = contents.split(announcer[0])[0]
-#     
-#     for i in ('[MBN 온라인 뉴스팀]', '[MBN 온라인뉴스팀]', '< Copyright'):
-#         contents = contents.split(i)[0]
-    
     paterns = (('【 앵커멘트 】', 0), ('【 기자 】', 0),(r'▶[ 가-힣\(☎\)]+:[ /가-힣\'-]*-', 0), 
                (r'\[[ 가-힣]+/[ a-zA-Z0-9@\._]+\]', 1), (r'[a-zA-Z0-9\._]+@[a-zA-Z0-9\._]', 1), 
                (r'MBN[ ]?뉴스[ 가-힣]+입니다\.', 1), (r'\[MBN 온라인 뉴스팀\]', 1), 
                (r'\[MBN 온라인뉴스팀\]', 1), ('< Copyright', 1))
     contents = remove(paterns, contents)
     
-#     title = title.split(']')
-#     title = title[0] if len(title) == 1 else title[1]
     title = remove((('\]', 2),), title)
     
     return [title.strip(), contents.strip()]
@@ -618,87 +579,51 @@ def mbn(title, contents):
 #이한라 기자였습니다.이한라 기자(hlmt@sbs.co.kr)
 #보다 자세한 사항은 e편한세상 홈페이지에서 확인할 수 있다.온라인 뉴스팀 기자(sbscnbcnews@sbs.co.kr)
 #[SBSCNBC 뉴미디어팀](기획 : 손석우 / 구성 : 김미화 / 편집 : 서이경)
-def sbsCnbc(title, contents):
-    return [title.strip(), contents.strip()]
 
-refin_funcs = {'경향신문' : kyunghyang,
-               '매일경제' : maeile,
-               '세계일보' : segye,
-               '이코노미스트' : economist,
-               '중앙SUNDAY' : lambda x, y: x+y,   #제외
-               '한국경제TV' : hanGyeongTV,
-               'SBS 뉴스' : sbsNews,
-               '국민일보' : gukmin,
-               '머니S' : moneys,
-               '신동아' : sindonga,
-               '조선비즈' : chosunbiz,
-               '중앙일보' : joongang,
-               '한국일보' : hankook,
-               'YTN' : ytn,
-               '뉴시스' : newsis,
-               '머니투데이' : moneyToday,
-               '아시아경제' : asiae,
-               '조선일보' : chosun,
-               '파이낸셜뉴스' : financialNews,
-               '헤럴드경제' : herald,
-               '동아일보' : donga,
-               '문화일보' : munhwa,
-               '연합뉴스' : yna,
-               '조세일보' : jose,
-               '한겨레' : hani,
-               'MBC 뉴스' : mbcNews,
-               '디지털타임스' : digitalTimes,
-               '서울경제' : seoule,
-               '연합뉴스TV' : ytnTV,
-               '주간경향' : weekly_khan,
-               '한경비즈니스' : lambda x, y: [x, y],
-               'MBN' : mbn,
-               '매경이코노미' : lambda x, y: [x, y],
-               '서울신문' : lambda x, y: [x, y],
-               '이데일리' : lambda x, y: [x, y],
-               '주간동아' : lambda x, y: [x, y],
-               '한국경제' : lambda x, y: [x, y],
-               'SBS CNBC' : sbsCnbc
-               }
-
-refin_patterns= {'경향신문' : patterns_kyunghyang,
-                 '매일경제' : maeile,
-                 '세계일보' : segye,
-                 '이코노미스트' : economist,
-                 '중앙SUNDAY' : lambda x, y: [x, y],   #제외
-                 '한국경제TV' : hanGyeongTV,
-                 'SBS 뉴스' : sbsNews,
-                 '국민일보' : gukmin,
-                 '머니S' : moneys,
-                 '신동아' : sindonga,
-                 '조선비즈' : chosunbiz,
-                 '중앙일보' : joongang,
-                 '한국일보' : hankook,
-                 'YTN' : ytn,
-                 '뉴시스' : newsis,
-                 '머니투데이' : moneyToday,
-                 '아시아경제' : asiae,
-                 '조선일보' : chosun,
-                 '파이낸셜뉴스' : financialNews,
-                 '헤럴드경제' : herald,
-                 '동아일보' : donga,
-                 '문화일보' : munhwa,
-                 '연합뉴스' : yna,
-                 '조세일보' : jose,
-                 '한겨레' : hani,
-                 'MBC 뉴스' : mbcNews,
-                 '디지털타임스' : digitalTimes,
-                 '서울경제' : seoule,
-                 '연합뉴스TV' : ytnTV,
-                 '주간경향' : weekly_khan,
-                 '한경비즈니스' : lambda x, y: [x, y],
-                 'MBN' : mbn,
-                 '매경이코노미' : lambda x, y: [x, y],
-                 '서울신문' : lambda x, y: [x, y],
-                 '이데일리' : lambda x, y: [x, y],
-                 '주간동아' : lambda x, y: [x, y],
-                 '한국경제' : lambda x, y: [x, y],
-                 'SBS CNBC' : sbsCnbc
+refin_patterns= {'경향신문' : (((r'\]', 2),), (('▶', 1),)),
+                 '매일경제' : (((r'\]', 2),), ((r'\[', 1),)),
+                 '세계일보' : (((r'\]', 2),), 
+                            ((r'[a-zA-Z0-9\._]+@segye.com', 0),('[ =,가-힣]*ⓒ', 1),
+                             ('ⓒ 세상을 보는 눈, 글로벌 미디어', 1))),
+                 '이코노미스트' : (((r'\]', 2),), ((r'\[', 1),)),
+                 '중앙SUNDAY' : (((r'\]', 2),), ((r'\[', 1),)),   #제외
+                 '한국경제TV' : (((r'\]', 2),), (('▶', 1),)),
+                 'SBS 뉴스' : (((r'\]', 2),), (('▶', 1),)),
+                 '국민일보' : (((r'\]', 2),), (('▶', 1),)),
+                 '머니S' : (((r'\]', 2),), (('▶', 1),)),
+                 '신동아' : (((r'\]', 2),), (('▶', 1),)),
+                 '조선비즈' : (((r'\]', 2),), (('▶', 1),)),
+                 '중앙일보' : (((r'\]', 2),), (('▶', 1),)),
+                 '한국일보' : (((r'\]', 2),), (('▶', 1),)),
+                 'YTN' : (((r'\]', 2),), (('▶', 1),)),
+                 '뉴시스' : (((r'\]', 2),), (('▶', 1),)),
+                 '머니투데이' : (((r'\]', 2),), (('▶', 1),)),
+                 '아시아경제' : (((r'\]', 2),), (('▶', 1),)),
+                 '조선일보' : (((r'\]', 2),), (('▶', 1),)),
+                 '파이낸셜뉴스' : (((r'\]', 2),), (('▶', 1),)),
+                 '헤럴드경제' : (((r'\]', 2),), (('▶', 1),)),
+                 '동아일보' : (((r'\]', 2),), (('▶', 1),)),
+                 '문화일보' : (((r'\]', 2),), (('▶', 1),)),
+                 '연합뉴스' : (((r'\]', 2),), (('▶', 1),)),
+                 '조세일보' : (((r'\]', 2),), (('▶', 1),)),
+                 '한겨레' : (((r'\]', 2),), (('▶', 1),)),
+                 'MBC 뉴스' : (((r'\]', 2),), (('▶', 1),)),
+                 '디지털타임스' : (((r'\]', 2),), (('▶', 1),)),
+                 '서울경제' : (((r'\]', 2),), (('▶', 1),)),
+                 '연합뉴스TV' : (((r'\]', 2),), (('▶', 1),)),
+                 '주간경향' : (((r'\]', 2),), (('▶', 1),)),
+                 '한경비즈니스' : (((r'\]', 2),), (('▶', 1),)),
+                 'MBN' : (((r'\]', 2),),
+                          (('【 앵커멘트 】', 0), ('【 기자 】', 0), (r'▶[ 가-힣\(☎\)]+:[ /가-힣\'-]*-', 0),
+                           (r'\[[ 가-힣]+/[ a-zA-Z0-9@\._]+\]', 1), (r'[a-zA-Z0-9\._]+@[a-zA-Z0-9\._]', 1), 
+                           (r'MBN[ ]?뉴스[ 가-힣]+입니다\.', 1), (r'\[MBN 온라인 뉴스팀\]', 1), 
+                           (r'\[MBN 온라인뉴스팀\]', 1), ('< Copyright', 1))),
+                 '매경이코노미' : (((r'\]', 2),), (('▶', 1),)),
+                 '서울신문' : (((r'\]', 2),), (('▶', 1),)),
+                 '이데일리' : (((r'\]', 2),), (('▶', 1),)),
+                 '주간동아' : (((r'\]', 2),), (('▶', 1),)),
+                 '한국경제' : (((r'\]', 2),), (('▶', 1),)),
+                 'SBS CNBC' : (((r'\]', 2),), (('▶', 1),))
                  }
 
 # patern-삭제할 패턴과 삭제 모드 (모드-0:해당패턴만 삭제/1:해당패턴 뒤 삭제/2:해당패턴 앞 삭제) contents-삭제 대상 
@@ -719,6 +644,7 @@ def remove(patterns, contents):
                 contents = contents.split(wor)[1]
                 
     return contents
+
 def refin(press, contents, title):
     patterns = refin_patterns[press]
     title = remove(patterns[1], title)
