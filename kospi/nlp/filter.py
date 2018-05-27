@@ -4,7 +4,7 @@ import pandas
 import time
 import re
 
-from nlp.count import write_count_csv as write_count
+from kospi.nlp.count import write_count_csv as write_count
 
 def read_nouns_txt(nouns_route):
     with open(nouns_route, 'r', encoding='utf-8') as f:
