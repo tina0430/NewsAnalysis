@@ -3,14 +3,14 @@ from newsRefining.functions import refin
 
 news = ''
 
-with open('./news_20171231.json', 'r', encoding='utf-8') as f:
+with open('../news_20180106.json', 'r', encoding='utf-8') as f:
     jdata = json.load(f)
     cnt = len(jdata)
 
     for i in range(1, cnt + 1):
         press = jdata['news' + str(i)]['press']
         
-        if press == '세계일보':
+        if press == '이코노미스트':
             title = jdata['news' + str(i)]['title']
             contents = jdata['news' + str(i)]['contents']
             

@@ -10,11 +10,18 @@ def segye(title, contents):
     else: 
         contents = contents.split('ⓒ 세상을 보는 눈, 글로벌 미디어')[0]
     return [title.strip(), contents.strip()]
+
+#이종우 IBK투자증권 리서치센터장[ⓒ 이코노미스트() and JTBC Content Hub Co., Ltd. 무단 전재 및 재배포 금지]
+#김성희 기자 kim.sunghee@joongang.co.kr[ⓒ 이코노미스트() and JTBC Content Hub Co., Ltd. 무단 전재 및 재배포 금지]
+#남화영 헤럴드경제 스포츠팀 편집장[ⓒ 이코노미스트() and JTBC Content Hub Co., Ltd. 무단 전재 및 재배포 금지]
+#조원경 기획재정부 국제금융심의관[ⓒ 이코노미스트() and JTBC Content Hub Co., Ltd. 무단 전재 및 재배포 금지]
+#장중호 경영컨설턴트[ⓒ 이코노미스트() and JTBC Content Hub Co., Ltd. 무단 전재 및 재배포 금지]
+#※ 필자는 
 def economist(title, contents):
     contents = contents.split('[ⓒ 이코노미스트(')[0]
     contents = contents.split('※ 필자는')[0]
     
-    email = re.findall(r'([-_\.0-9a-zA-Z]*@joongang\.co\.kr)', contents)
+    email = re.findall(r'([ 가-힣]+[-_\.0-9a-zA-Z]*@joongang\.co\.kr)', contents)
     if len(email) != 0:
         contents = contents.split(email[0])[0]
     
@@ -585,8 +592,10 @@ refin_patterns= {'경향신문' : (((r'\]', 2),), (('▶', 1),)),
                  '세계일보' : (((r'\]', 2),), 
                             ((r'[a-zA-Z0-9\._]+@segye.com', 0),('[ =,가-힣]*ⓒ', 1),
                              ('ⓒ 세상을 보는 눈, 글로벌 미디어', 1))),
-                 '이코노미스트' : (((r'\]', 2),), ((r'\[', 1),)),
-                 '중앙SUNDAY' : (((r'\]', 2),), ((r'\[', 1),)),   #제외
+                 '이코노미스트' : (((r'\]', 2),), 
+                               (('※', 1), (r'([ 가-힣]*[-_\.0-9a-zA-Z]+@joongang\.co\.kr\[ⓒ 이코노미스트)', 1), 
+                                (r'[ 가-힣a-zA-Z]*\[ⓒ 이코노미스트', 1))),
+                 '중앙SUNDAY' : (((r'\]', 2),), ((r'@', 1),)),   #제외
                  '한국경제TV' : (((r'\]', 2),), (('▶', 1),)),
                  'SBS 뉴스' : (((r'\]', 2),), (('▶', 1),)),
                  '국민일보' : (((r'\]', 2),), (('▶', 1),)),
@@ -631,7 +640,8 @@ def remove(patterns, contents):
     
     for pa in patterns:
         words = re.findall(pa[0], contents)
-         
+#         print(pa)
+        
         if len(words) == 0:
             continue
         
