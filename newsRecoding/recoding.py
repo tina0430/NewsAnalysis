@@ -1,3 +1,4 @@
+
 import json
 import re
 import pandas as pd 
@@ -25,8 +26,6 @@ def replace_all(file_name, re_dict, result_directory):
         for roof in range(3):
             text = jdata[a][roof]
             
-#             print(roof, a, b)
-#             print(jdata[a][roof])
             text = re.sub(r"['(']\w+[')']", "", text)
             text = re.sub(r"['(']\w+\W\w+[')']", "", text)
             text = re.sub(r"\d+[일]","",text)
@@ -37,6 +36,9 @@ def replace_all(file_name, re_dict, result_directory):
                 if roof == 1:
                     break
                 
+                if text.find(old) == 0:
+                    text = text.replace(old, new, 1)
+                    
                 text = text.replace(old, new)
             
             if roof == 0:
@@ -49,15 +51,12 @@ def replace_all(file_name, re_dict, result_directory):
 
             if roof == 2:
                 words["news%d"%j] = {"press":text2,"contents":text1,"title":text3}
-                #write_json(words)
                 j += 1
 
     if len(words) > 0:
+        #
         write_json(words, result_directory)
-#         i += 1
-#                 
-#         if i == 50:
-#             break
+
 
 def get_news_file_list(folder_route):
     if os.path.isdir(folder_route) == False:
@@ -77,9 +76,11 @@ def get_news_file_list(folder_route):
     
     return file_list
 
+
+
 if __name__ == '__main__':
-    news_directory = r''
-    result_directory = r''
+    news_directory = r'./'      
+    result_directory = r'./'    
     start_time = time.time()
     print("Recoding 시작")
     with open('recode.json','r',encoding="utf-8") as b:
@@ -92,5 +93,6 @@ if __name__ == '__main__':
 
     end_time = time.time()
     print('Recoding 끝 - %s 초' % str(end_time - start_time) )
+
 
     
