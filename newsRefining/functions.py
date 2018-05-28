@@ -1,7 +1,6 @@
 import re 
 
 def ytn(press, title, contents):
-    print(contents)
     if press != 'YTN':
         print('wrong data')
         return [title, contents]
@@ -193,13 +192,11 @@ def remove(pattern, contents):
     
     for pa in pattern:
         words = re.findall(pa[0], contents)
-#         print(pa)
         
         if len(words) == 0:
             continue
         
         for wor in words:
-#             print(wor)
             if pa[1] == 0:
                 contents = contents.replace(wor, '')
             elif pa[1] == 1:
@@ -220,9 +217,7 @@ def refin_news(press, title, contents):
 
     if press == '중앙SUNDAY':
         return ['','']
-    print(press)
-    print(title)
-    print(contents)
+
     pattern = patterns[press]
     title = remove(pattern[0], title)
     contents = remove(pattern[1], contents)
