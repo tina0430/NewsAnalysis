@@ -1,0 +1,7 @@
+﻿news_folder,../files/news_original
+result_folder,../files/result
+user_dictionary,../files/dictionaries/KOSPI_UserDictionary.csv
+filter_dictionary,../files/dictionaries/‪filter_dictionary.xlsx
+recoding_dictionary,../files/dictionaries/recode_dictionary.json
+konlp_engine,Twitter
+konlp_function,nouns
