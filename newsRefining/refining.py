@@ -29,3 +29,4 @@ def refin_new_day(date):
     
 if __name__ == "__main__":
     refin_new_day('20180404')
+    
