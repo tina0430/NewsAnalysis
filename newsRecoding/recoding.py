@@ -55,7 +55,8 @@ def replace_all(file_name, re_dict, result_directory):
 
     if len(words) > 0:
         #
-        write_json(words, result_directory)
+#         write_json(words, result_directory)
+        return words
 
 
 def get_news_file_list(folder_route):
