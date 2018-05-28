@@ -130,10 +130,8 @@ if __name__ == '__main__':
     # inversting 사이트에서 kospiCrwaling 지수를 얻어옵니다.
     # toCSV = True : 20180101_20180501_kospi.csv 형식으로 저장합니다.
     kospi_df = get_kospi(start, end, toCSV = True)
-    print(kospi_df)
      
     # csv를 읽어옵니다.
     filename = start.replace(r'/', '') + '_' + end.replace(r'/', '') + '_' + 'kospiCrwaling.csv'
     read_df = pandas.read_csv(filename, header=0, encoding='utf-8')
-    print(read_df)
     

@@ -1,7 +1,4 @@
-# This Python file uses the following encoding: utf-8
-
 from nlp import knlp, count, filter
-
 
 import os
 import re
@@ -21,6 +18,7 @@ class Settings():
     konlp_function = None
     filter_route = None
     result_route = None
+    user_dict_route = None
     
     @classmethod
     def settings(cls, settings_route):
@@ -33,6 +31,7 @@ class Settings():
         cls.konlp_function = settings.konlp_function[0].replace('\u202a','')
         cls.filter_route = settings.filter_dictionary[0].replace('\u202a','')
         cls.result_route = settings.result_folder[0].replace('\u202a','')
+        cls.user_dict_route = settings.user_dictionary[0].replace('\u202a','')
 
 class News():
     def __init__(self, news_route):
@@ -49,13 +48,47 @@ class News():
             print('result in empty.')
             return
         
-        if route is None or os.path.isdir(route) == False:
+        if route is None:
             route = ''
-        else:
-            route = route + '\\'
+        
+        if os.path.isdir(route) == False:
+            os.makedirs(route, exist_ok = True)
+        
+        route = route + '\\'
         
         filename = route + '{}_{}_{}_{}.csv'.format(self.name, 'nouns', 'count', 'filter')
-        self.result.to_csv(filename, sep = '\t', index = False)
+        self.result.to_csv(filename, sep = ',', index = False, encoding='cp949')
+    
+    def write_count(self, route = None):
+        if self.counts is None:
+            print('counts is empty.')
+            return
+        
+        if route is None:
+            route = ''
+        if os.path.isdir(route) == False:
+            os.makedirs(route, exist_ok = True)
+
+        route = route + '\\'
+            
+        filename = route + '{}_{}_{}.csv'.format(self.name, 'nouns', 'count')
+        self.counts.to_csv(filename, sep = ',', index = False, encoding='cp949')
+        
+    def write_nouns(self, route = None):
+        if self.nouns is None:
+            print('nouns is empty.')
+            return
+        
+        if route is None:
+            route = ''
+        if os.path.isdir(route) == False:
+            os.makedirs(route, exist_ok = True)
+        
+        route = route + '\\'
+            
+        filename = route + '{}_{}.csv'.format(self.name, 'nouns')
+        with open(filename, 'w', encoding='cp949') as fw:
+            fw.write('\n'.join(self.nouns))
     
     def news_process(self):
         Settings.settings('settings.csv')
@@ -70,7 +103,11 @@ class News():
         print(log_read_news)
         
         start_konlpy = time.time()
-        self.nouns = knlp.get_KoNLP(self.news, Settings.konlp_class, Settings.konlp_function)
+        self.nouns = knlp.get_KoNLP(self.news,
+                                    Settings.konlp_class,
+                                    Settings.konlp_function,
+                                    userDict = Settings.user_dict_route)
+
         self.nouns = list(itertools.chain.from_iterable(self.nouns))
         end_konlp = time.time()
         
@@ -78,6 +115,7 @@ class News():
                                                               self.name,
                                                               str(end_konlp - start_konlpy))
         print(log_nouns)
+        self.write_nouns(Settings.result_route + '_nouns')
 
         start_count = time.time()
         count_data = count.get_unique_count(self.nouns)
@@ -106,13 +144,17 @@ def get_news_file_list(folder_route):
     if os.path.isdir(folder_route) == False:
         return None
     
-    news_pattern = re.compile('^news_[\d]+.json$')
+    news_pattern = re.compile('.*news_[\d]+.json$')
     file_list = []
     for file in os.listdir(folder_route):
-        #if file.endswith('json'):
-        if news_pattern.match(file) != None:
-            file = '\\' + file
-            file_list.append(folder_route + file)
+        file_route = folder_route + '\\' + file
+        
+        if os.path.isfile(file_route):
+            if news_pattern.match(file_route) != None:
+                file_list.append(file_route)
+                
+        elif os.path.isdir(file_route):
+            file_list.extend(get_news_file_list(file_route + '\\'))
     
     return file_list
 
@@ -126,7 +168,6 @@ def run_News(news_object):
 if __name__ == '__main__':
     # news list
     # run read news
-    # run change words
     # run konlpy
     # run counting
     # run filtering
@@ -148,7 +189,7 @@ if __name__ == '__main__':
     news_list = []
     for route in news_routes:
         news_list.append(News(route))
-
+    
         # 멀티
     pool = multiprocessing.Pool(os.cpu_count() - 1)
     news_list = pool.map(run_News, news_list)

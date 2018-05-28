@@ -3,46 +3,14 @@ from konlpy.tag import Komoran
 from konlpy.tag import Twitter
 from konlpy.tag import Hannanum
 
+from ckonlpy.tag import Twitter as cTwitter
+
 import time
 import json
 import re
+import pandas
 
 from itertools import chain
-
-import jpype
-import threading
-
-class ThreadReturnValue(threading.Thread):
-    def __init__(self, group=None, target=None, name=None, args=(), kwargs=None, *, daemon=None):
-        self._return = None
-        threading.Thread.__init__(self, group, target, name, args, kwargs)
-        
-    def run(self):
-        try:
-            if self._target:
-                self._return = self._target(*self._args, **self._kwargs)
-        finally:
-            del self._target, self._args, self._kwargs
-    
-    def join(self, timeout=None):
-        threading.Thread.join(self, timeout)
-        return self._return
-
-class TwitterWrapped(Twitter):
-    def nouns(self, phrase):
-        jpype.attachThreadToJVM()
-        #print(bool(jpype.isThreadAttachedToJVM()))
-        return Twitter.nouns(self, phrase)
-#         data = Twitter.nouns(self, phrase)
-#         print(data)
-#         return data
-
-class KoNLP_Data():
-    def __init__(self, name = '', konlp_obj = None, konlp_func = None):
-        self.name = ''
-        self.konlp_function = None
-        self.konlp_object = None
-        self.result = []
         
 def split_paragraph(paragraph):
     pt = re.compile(r'[가-힣]\.')
@@ -102,32 +70,26 @@ def read_news(newsroute, sep='\n'):
     return news
 
 
-def get_KoNLP(text, konlp_name, func_name):
-#     if konlp_name == 'Twitter':
-#         konlp_name += 'Wrapped'
-        
+def get_KoNLP(text, konlp_name, func_name, **kwds):
     classname = globals()[konlp_name]
     konlp_obj = classname()
+    
+    userDict_name = kwds.get('userDict')
+    if userDict_name is not None:
+        if konlp_name == 'cTwitter':
+            userdict = pandas.read_csv(userDict_name, encoding = 'utf-8', header = None)
+            konlp_obj.add_dictionary(userdict[0].tolist(), 'Noun')
+
     konlp_func = getattr(konlp_obj, func_name)
     
     text = text.strip().split('\n')
-#     if not isinstance(text, str):
-        #temp_map = map(lambda x:split_paragraph(x), text)
-        #text = list(chain.from_iterable(temp_map))
 
-#     
-#     if text == None or len(text) == 0:
-#         return None
-    
     #print("KoNLPY Engine : {}, use function : {}, start".format(konlp_name, func_name))
-    start_time = time.time()
+    #start_time = time.time()
     
     words = []
     for data in text:
         words.append(konlp_func(data))
-#         thread = ThreadReturnValue(target=konlp_func, args=(data,))
-#         thread.start()
-#         words.append(thread.join())
 
     #end_time = time.time()
     #print('%s %s end - %s sec' % (konlp_name, func_name, str(end_time - start_time)) )
@@ -140,7 +102,7 @@ def get_KoNLP(text, konlp_name, func_name):
 # bMorphs, bNouns, bPos : morphs(), nouns(), pos() 함수 의 실행 여부
 # bWriteTxT : 결과를 파일로 출력할 것인지 여부
 def run_KoNLP(news_data, nlp_obj, bMorphs = False, bNouns = False, bPos = False, bWriteTxT = True):
-    data = read_news(news_route)
+    data = read_news(news_data)
     class_name = nlp_obj.__class__.__name__
     
     nlp_func = []
@@ -177,7 +139,7 @@ def run_KoNLP(news_data, nlp_obj, bMorphs = False, bNouns = False, bPos = False,
     if bWriteTxT:
         # '~/news20180101.json'.split('\\')[-1] : news20180101.json
         # 'news20180101.json'.split('.')[0] : news20180101
-        knlp_filename = '{}_{}.txt'.format(news_route.split('\\')[-1].split('.')[0],
+        knlp_filename = '{}_{}.txt'.format(news_data.split('\\')[-1].split('.')[0],
                                            class_name)
         with open(knlp_filename, 'w', encoding = 'utf-8') as fstream:
             for i in range(len(titles)):
@@ -216,28 +178,15 @@ def run_kkma(data):
 
 
 if __name__ == '__main__':
-    news_route = 'news_20180113.json'
-    #news_route = r'C:\Users\acorn\Downloads\news20180223.json'
+    pass
+    #news_route = 'news_20180113.json'
     
-    # 20180522 : PermissionError
-#     process1 = multiprocessing.Process(target = run_KoNLP, args = (news_route, Twitter(), False, True, False))
-#     process1.start()
-#     process1.join()
     #run_KoNLP(news_route, Twitter(), bNouns = True)
 #     run_KoNLP(news_route, Komoran(), bNouns = True)
 #     run_KoNLP(news_route, Hannanum(), bNouns = True)
 #     run_KoNLP(news_route, Kkma(), bNouns = True)
-    #text = '그랬는데 그랬다.\n그렇다. 하지만그랬다.\n어머나세상에 그랬다. 그렇고 그렇다.'.strip().split('\n')
-    #text = '남북 화해무드…서울 집값도 영향받나'
-    text = '우리나라는 아시아에 있다. 잠을 세시간밖에 자지 못했다.\n공사장 소리가 시끄럽다. 하지만 어떻게 할 수가 없다.\n그런데 지금 이게 뭘 하는 것인지 모르겠다. 난 무엇을 쓰고있는 것인가. 배가 고프지 않다. 그런데 점심은 먹어야 한다.\n살어리 살어리랐다. 청산에 살어리랐다.\n'
-    data = ['abs']
-    print(isinstance(data, str))
-    temp_map = map(lambda x:split_paragraph(x), text)
-    new_text = list(chain.from_iterable(temp_map))
-    print('map_result:', new_text)
-    
-    start = time.time()
-    #print( get_KoNLP(text, 'Twitter', 'nouns') )
-    get_KoNLP(text, 'Twitter', 'nouns')
-    #get_KoNLP(read_news(r'C:\Users\acorn\Documents\drive-download-20180524T004330Z-001\201802\news_20180201.json'), 'Twitter', 'nouns')
-    print("job's done :", str(time.time() - start))
+#     text = '우리나라는 아시아에 있다. 잠을 세시간밖에 자지 못했다.\n공사장 소리가 시끄럽다. 하지만 어떻게 할 수가 없다.\n그런데 지금 이게 뭘 하는 것인지 모르겠다. 난 무엇을 쓰고있는 것인가. 배가 고프지 않다. 그런데 점심은 먹어야 한다.\n살어리 살어리랐다. 청산에 살어리랐다.\n'
+#     
+#     start = time.time()
+#     #print( get_KoNLP(text, 'Twitter', 'nouns') )
+#     print("job's done :", str(time.time() - start))
