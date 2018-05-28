@@ -3,8 +3,6 @@ import re
 from collections import Counter
 from operator import itemgetter
 
-import pandas
-
 # 읽을 파일 - nouns 부터 읽는다.
 def read_nouns(filename):
     with open(filename, 'r', encoding = 'utf-8') as fstream:
@@ -78,15 +76,5 @@ def create_count_csv(read_file_route, sep = '\t',  bPos = False):
     write_count_csv(write_filename, count_data, sep, bPos = bPos)
 
 if __name__ == '__main__':
-    #create_count_csv('news_20180113_Twitter.txt')
-    data1 = get_unique_count(['a','a','b','c','b',['a','b']])
-    data = get_unique_count(['a','a','b','c','b'])
-    print(type(data), data.keys(), data.values())
-    df = pandas.DataFrame({'word':list(data.keys()), 'count':list(data.values())})
-    df = df.sort_index(axis = 1, ascending  = False)
-    
-    print(df)
-#     create_count_csv('news_20180113_Hannanum.txt')
-#     create_count_csv('news_20180113_Komoran.txt')
-#     create_count_csv('news_20180113_Kkma.txt')
+    pass
     

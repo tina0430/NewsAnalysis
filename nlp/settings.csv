@@ -1,5 +1,6 @@
-news_folder,./
-filter_dictionary,./
+﻿news_folder,./
+result_folder,./
+user_dictionary,KOSPI_UserDictionary.csv
+filter_dictionary,‪filter_dictionary.xlsx
 konlp_engine,Twitter
 konlp_function,nouns
-result_folder,./
