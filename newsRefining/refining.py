@@ -20,8 +20,8 @@ def refin_new_day(file_name):
 #     file_name = '../news_'+date+'_refin.json'
 #     with open(file_name, 'w', encoding='utf-8') as f:
 #         json.dump(jdata, f, ensure_ascii=False, indent="\t")
-    
-    return jdata        
+#     print(jdata)
+    return jdata
     
 if __name__ == "__main__":
     refin_new_day('../news_20180404.json')
