@@ -23,7 +23,7 @@ def replace_all(re_dict, json_data):
     words = OrderedDict()
 
     j = 1
-    for a, b in jdata.items():
+    for a in jdata.keys():
         for roof in range(3):
             text = jdata[a][roof]
             text = re.sub(r"['(']\w+[')']", "", text)
@@ -32,7 +32,7 @@ def replace_all(re_dict, json_data):
             text = re.sub(r"['(']\d*\W\d+\W[')']", "", text)
             text = re.sub(r"['(']\W\d*\W\d+\W[')']", "", text)
                   
-            for old, new in dic.items():
+            for old, new in re_dict.items():
                 if roof == 1:
                     break
                 
@@ -54,29 +54,12 @@ def replace_all(re_dict, json_data):
                 j += 1
 
     if len(words) > 0:
-
-#         write_json(words, result_directory)
         return words
 
-
-# def get_news_file_list(folder_route):
-#     if os.path.isdir(folder_route) == False:
-#         return None
-#      
-#     news_pattern = re.compile('.*news_[\d]+.json$')
-#     file_list = []
-#     for file in os.listdir(folder_route):
-#         file_route = folder_route + '\\' + file
-#          
-#         if os.path.isfile(file_route):
-#             if news_pattern.match(file_route) != None:
-#                 file_list.append(file_route)
-#                  
-#         elif os.path.isdir(file_route):
-#             file_list.extend(get_news_file_list(file_route + '\\'))
-#      
-#     return file_list
-
+def load_recode_dict(dict_route):
+    with open(dict_route,'r',encoding="utf-8") as b:
+        dic = json.load(b)
+    return dic
 
 if __name__ == '__main__':
     news_directory = r'./'      
@@ -88,14 +71,9 @@ if __name__ == '__main__':
     start_time = time.time()
     
     print("Recoding 시작")
-    with open('recode.json','r',encoding="utf-8") as b:
-        dic = json.load(b)
-        
+    
+    dic = load_recode_dict(r'../files/dictionaries/recode_dictionary.json')
     replace_all(dic, json_data)
-#     news_list = get_news_file_list(news_directory)
-#     if news_list is not None:
-#         for news_name in news_list:
-#             replace_all(news_name, dic, result_directory)
 
     end_time = time.time()
     print('Recoding 끝 - %s 초' % str(end_time - start_time) )
