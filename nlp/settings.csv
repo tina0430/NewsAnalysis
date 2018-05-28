@@ -1,0 +1,5 @@
+news_folder,./
+filter_dictionary,./
+konlp_engine,Twitter
+konlp_function,nouns
+result_folder,./

@@ -118,7 +118,7 @@ def get_kospi(start_date = '2018/04/01', end_date = '2018/05/01', col_kor = True
     kospi_df = pandas.DataFrame(data = data_list, columns = columns)
     
     if toCSV == True:
-        filename = start_date.replace(r'/', '') + '_' + end_date.replace(r'/', '') + '_' + 'kospi.csv'
+        filename = start_date.replace(r'/', '') + '_' + end_date.replace(r'/', '') + '_' + 'kospiCrwaling.csv'
         kospi_df.to_csv(filename, header = True, index = False, encoding = 'utf-8')
         
     return kospi_df
@@ -127,13 +127,13 @@ if __name__ == '__main__':
     start = '2018/05/01'
     end = '2018/05/10'
  
-    # inversting 사이트에서 kospi 지수를 얻어옵니다.
+    # inversting 사이트에서 kospiCrwaling 지수를 얻어옵니다.
     # toCSV = True : 20180101_20180501_kospi.csv 형식으로 저장합니다.
     kospi_df = get_kospi(start, end, toCSV = True)
     print(kospi_df)
      
     # csv를 읽어옵니다.
-    filename = start.replace(r'/', '') + '_' + end.replace(r'/', '') + '_' + 'kospi.csv'
+    filename = start.replace(r'/', '') + '_' + end.replace(r'/', '') + '_' + 'kospiCrwaling.csv'
     read_df = pandas.read_csv(filename, header=0, encoding='utf-8')
     print(read_df)
     

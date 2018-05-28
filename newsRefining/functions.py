@@ -33,9 +33,7 @@ def moneys(title, contents):
     return [title.strip(), contents.strip()]
 
 def sindonga(title, contents):
-    (((r'\]', 2),), 
-     ((r'[\| ]*[0-9가-힣  ]+기자[ ]*[-_\.0-9a-zA-Z]+@[-_\.0-9a-zA-Z]+', 1),(r'[-_\.0-9a-zA-Z]+@[-_\.0-9a-zA-Z]+', 1),
-      (r'\[신동아\]', 0)))
+    
     writer_email = re.findall(r'[\| ]*[0-9가-힣  ]+기자[ ]*[-_\.0-9a-zA-Z]+@[-_\.0-9a-zA-Z]+', contents)
     if len(writer_email) != 0:
         contents = contents.split(writer_email[0])[0]
@@ -54,41 +52,10 @@ def sindonga(title, contents):
     
     return [title.strip(), contents.strip()]
 
-#만족
-def chosunbiz(title, contents):
-    writer = re.findall(r'\[[가-힣0-9A-Za-z@\. =]*\]chosunbiz.com', contents)
-    if len(writer) != 0:
-        contents = contents.split(writer[0])[len(writer)-1]
-    
-    title = title.split(']')
-    title = title[0] if len(title) == 1 else title[1]
-    return [title.strip(), contents.strip()]
-
-#얘네는 못거름
+#얘네는 못거름 - 중앙일보
 #김기찬 고용노동선임기자▶모바일에서 만나는 중앙일보ⓒ중앙일보and JTBC Content Hub Co., Ltd. 무단 전재 및 재배포 금지
 #김진상 앰플러스파트너스(주) 대표이사·인하대 겸임교수 jkim@ampluspartners.com
 #신성진 배나채 대표 truth64@hanmail.net▶ 중앙일보/친구추가▶ 이슈를 쉽게 정리해주는ⓒ중앙일보, 무단 전재 및 재배포 금지
-def joongang(title, contents):
-    if title.rfind('[인사]') != -1:
-        contents = ''
-    
-    writer_email = re.findall(r'[가-힣  ]+[0-9A-Za-z\.]+@joongang.co.kr▶', contents)
-    if len(writer_email) != 0:
-        print(writer_email)
-        contents = contents.split(writer_email[0])[len(writer_email)-1]
-        
-    writer = re.findall(r'[가-힣  ][기자]▶', contents)
-    if len(writer) != 0:
-        print(writer)
-        contents = contents.split(writer[0])[len(writer)-1]
-    
-    contents = contents.split('[ⓒ 조인스랜드 : JTBC Content Hub Co., Ltd. 무단 전재 및 재배포 금지]')[0]
-    contents = contents.split('▶모바일에서 만나는 중앙일보ⓒ중앙일보and JTBC Content Hub Co., Ltd. 무단 전재 및 재배포 금지')[0]
-    
-    title = title.split(']')
-    title = title[0] if len(title) == 1 else title[1]
-    
-    return [title.strip(), contents.strip()]
 
 
 #신상순[ⓒ 한국일보(), 무단 전재 및 재배포 금지]
@@ -113,6 +80,7 @@ def hankook(title, contents):
 #YTN Star 반서연 기자 (uiopkl22@ytnplus.co.kr)[사진제공 = CJ CGV]
 #취재기자ㅣ오인석촬영기자ㅣ윤원식영상편집ㅣ오유철자막뉴스 제작ㅣ이하영[저작권자(c) YTN & YTN PLUS 무단전재 및 재배포 금지]
 def ytn(title, contents):
+    ((), ())
     if title.rfind('[자막뉴스]') != -1:
         writer = re.findall(r'[ 가-힣\ㅣ]+\[저작권자(c)', contents)
         if len(writer) != 0:
@@ -132,25 +100,7 @@ def ytn(title, contents):
     title = title[0] if len(title) == 1 else title[1]
     
     return [title.strip(), contents.strip()]
-def newsis(title, contents):
-    writer = re.findall(r'\【[ 가-힣]+=뉴시스\】[ 가-힣]+기자[ =]+', contents)
-    if len(writer) != 0:
-        print(writer)
-        contents = contents.replace(writer[0], '')
-    
-    email = re.findall(r'[a-zA-Z0-9]+@newsis.com', contents)
-    if len(email) != 0:
-        print(email)
-        contents = contents.replace(email[0], '')
-    
-    photo = re.findall(r'\(사진[ =가-힣]+제공\)', contents)
-    if len(photo) != 0:
-        print(photo)
-        contents = contents.split(photo[0])[0]
-    
-    contents = contents.split('공감언론 뉴시스가 독자 여러분의 소중한 제보를 기다립니다.')[0]
-        
-    return [title.strip(), contents.strip()]
+
 #[머니투데이 세종=최우영 기자] ~~~ 세종=최우영 기자 young@
 #[머니투데이 중기협력팀 이유미 기자] ~~~ 이유미 기자 youme@
 #[머니투데이 김훈남 기자] ~~~ 김훈남 기자 hoo13@mt.co.kr
@@ -164,8 +114,11 @@ def newsis(title, contents):
 #[머니투데이 영종도(인천)=최석환 기자] ~~~ 영종도(인천)=최석환 기자 neokism@mt.co.kr
 #송지유 기자 clio@, 박진영 기자 jyp@, 배영윤 기자 young25@mt.co.kr
 #[머니투데이 송지유 기자, 박진영 기자, 배영윤 기자]
-def moneyToday(title, contents):
-#     [표]
+def moneyToday(press, title, contents):
+    if press != '머니투데이':
+        print('wrong data')
+        return [title.strip(), contents.strip()]
+    
     writer = re.findall(r'\[머니투데이[ 가-힣 \(\)=,?&?]+\]', contents)
     if len(writer) != 0:
         contents = contents.replace(writer[0], '').strip()
@@ -183,68 +136,7 @@ def moneyToday(title, contents):
     
     return [title.strip(), contents.strip()]
 
-#
-#[아시아경제 이광호 기자] ~~~ 세종=이광호 기자 kwang@asiae.co.kr
-
-def asiae(title, contents):
-    
-    for i in ('[부고]', '[인사]'): #'아시아경제 오늘의 뉴스'
-        if title.rfind(i) != -1:
-            contents = ''
-    writer = re.findall(r'\[[ 가-힣=\]*아시아경제[ 가-힣=]+\]', contents)
-    if len(writer) != 0:
-        contents = contents.replace(writer[0], '').strip()
-        for i in ('[', '아시아경제 ','아시아경제', ']'):
-            writer[0] = writer[0].replace(i, '').strip()
-        contents = contents.split(writer[0])[0]
-        
-    writer = re.findall(r'[ =가-힣]+[a-zA-Z0-9\.]+@[a-zA-Z0-9\.]*', contents)
-    
-    if len(writer) != 0:
-        print(writer)
-        contents = contents.replace(writer[0], '').strip()
-        
-    bot = re.findall('다음은[가-힣0-9 ]+기준 오늘의[ 가-힣\-]+Top10 입니다.', contents)
-    if len(bot) != 0:
-        print(bot)
-        contents = contents.split(bot[0])[0]
-    
-    title = title.split(']')
-    title = title[0] if len(title) == 1 else title[1]
-    
-    return [title.strip(), contents.strip()]
-
 #크롤링시에 따로 가져오는거 만들어야한당 - 파이낸셜
-
-
-#[인사]
-#조갑천- Copyrights ⓒ 헤럴드경제 & heraldbiz.com, 무단 전재 및 재배포 금지 -
-def herald(title, contents):
-    if title.rfind('[인사]') != -1:
-        contents = ''
-    contents = contents.replace('(본 기사는 헤럴드경제로부터 제공받은 기사입니다.)', '')
-    #［ [
-    writer = re.findall(r'\[헤럴드경제=[ 가-힣]+\]', contents)
-    if len(writer) != 0:
-        contents = contents.replace(writer[0], '').strip()
-        
-    writer = re.findall(r'［헤럴드경제=[ 가-힣]+］', contents)
-    if len(writer) != 0:
-        contents = contents.replace(writer[0], '').strip()
-        
-    writer_email = re.findall(r'[가-힣]+ 기자/[ a-zA-Z0-9\.]+@[ a-zA-Z0-9\.]*- Copyrights', contents)
-    if len(writer_email) != 0:
-        contents = contents.split(writer_email[0])[0]
-    
-    email = re.findall(r'[a-zA-Z0-9\.]+@[ a-zA-Z0-9\.]*- Copyrights', contents)
-    if len(email) != 0:
-        contents = contents.split(email[0])[0]
-    
-    contents = contents.split('- Copyrights ⓒ 헤럴드경제')[0]
-    title = title.split(']')
-    title = title[0] if len(title) == 1 else title[1]
-
-    return [title.strip(), contents.strip()]
 
 #프놈펜=김성규 기자 sunggyu@donga.comⓒ 동아일보 & donga.com, 무단 전재 및 재배포 금지
 #세종=김준일 기자 jikim@donga.comⓒ 동아일보 & donga.com, 무단 전재 및 재배포 금지
@@ -348,19 +240,26 @@ patterns= {'경향신문' : (((r'\]', 2),), (('▶', 1),)),
            '머니S' : (((r'\]', 2),), (('▶', 1),)),
            '신동아' : (((r'\]', 2),), 
                      ((r'[\| ]*[0-9가-힣  ]+기자[ ]*[-_\.0-9a-zA-Z]+@[-_\.0-9a-zA-Z]+', 1),(r'[-_\.0-9a-zA-Z]+@[-_\.0-9a-zA-Z]+', 1),
-                      (r'\[신동아\]', 0))),
-           '조선비즈' : (((r'\]', 2),), (('▶', 1),)),
-           '중앙일보' : (((r'\]', 2),), (('▶', 1),)),
-           '한국일보' : (((r'\]', 2),), (('▶', 1),)),
-           'YTN' : (((r'\]', 2),), (('▶', 1),)),
-           '뉴시스' : (((r'\]', 2),), (('▶', 1),)),
-           '머니투데이' : (((r'\]', 2),), (('▶', 1),)),
+                      (r'\[신동아\]', 0), ('[\| ]*[0-9가-힣  ]+\|', 1))),
+           '조선비즈' : (((r'\]', 2),), ((r'\[[가-힣0-9A-Za-z@\. =]*\]chosunbiz.com', 1),)),
+           '중앙일보' : (((r'\[인사\]', 2), (r'\]', 2)), 
+                      ((r'[ =가-힣]+[0-9A-Za-z\.]+@joongang.co.kr▶', 1), (r'[ =가-힣]+[기자]▶', 1),
+                       (r'\[ⓒ 조인스랜드 : JTBC', 1), ('▶모바일에서 만나는 중앙일보', 1))),
+           '한국일보' : (((r'\]', 2),), ((r'\[ⓒ 한국일보\(', 1),)),
+           'YTN' : (((r'\]', 2),), ((r'\[저작권자\(c\) YTN', 1),)),
+           '뉴시스' : (((r'\]', 2),), 
+                     ((r'\【[ 가-힣]+=뉴시스\】[ 가-힣]+기자[ =]+', 0), (r'[a-zA-Z0-9]+@newsis.com', 0), (r'\(사진[ =가-힣]+제공\)', 1),
+                      ('공감언론 뉴시스가 독자 여러분의 소중한 제보를 기다립니다', 1))),
+           '머니투데이' : (((r'\]', 2),), ((r'\[머니투데이[ 가-힣 \(\)=,?&?]+\]', 1),)), #다른 함수 쓸꺼임
            '아시아경제' : (((r'\[부고\]', 3), (r'\[인사\]', 3), (r'\[포토\]', 0), (r'\]', 2)), 
                         ((r'\[[ 가-힣=\]*아시아경제[ 가-힣=]+\]', 0), (r'\[', 1), ('아시아경제 ', 1), (']', 1), 
-                         (r'[ 가-힣 =]+[a-zA-Z0-9\._]@asiae.co.kr', 1))),
+                         (r'[ 가-힣 =]+[a-zA-Z0-9\._]+@asiae.co.kr', 1))),
            '조선일보' : (((r'\]', 2),), ((r'\[[ 가-힣]*\]\[[ 가-힣]*\]- Copyrights', 1),)),
            '파이낸셜뉴스' : (((r'\]', 2),), (('※ 저작권자 ⓒ. 무단 전재-재배포 금지', 1),)),
-           '헤럴드경제' : (((r'\]', 2),), (('▶', 1),)),
+           '헤럴드경제' : (((r'\[인사\]', 3), (r'\[부고\]', 3), (r'\]', 2)),
+                        (('(본 기사는 헤럴드경제로부터 제공받은 기사입니다.)', 0), (r'\[헤럴드경제=[ 가-힣]+\]', 0),(r'［헤럴드경제=[ 가-힣]+］', 0),
+                         (r'[가-힣]+ 기자/[ a-zA-Z0-9\.]+@[ a-zA-Z0-9\.]*- Copyrights', 1), 
+                         (r'[a-zA-Z0-9\.]+@[ a-zA-Z0-9\.]*- Copyrights', 1), ('- Copyrights ⓒ 헤럴드경제', 1))),
            '동아일보' : (((r'\]', 2),), 
                       ((r'[ 가-힣=]+[a-zA-Z0-9\.]+@donga\.com', 1), (r'\[동아일보\]', 0), ('ⓒ 동아일보 ', 1),)),
            '문화일보' : (((r'\]', 2),), 
