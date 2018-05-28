@@ -1,9 +1,9 @@
 import json
-from newsRefining.functions import refin, moneyToday, ytn, hankook
+from newsRefining.functions import refin, moneyToday, ytn, edaily
 
 news = ''
 
-with open('../news_20180106.json', 'r', encoding='utf-8') as f:
+with open('../news_20180101.json', 'r', encoding='utf-8') as f:
     jdata = json.load(f)
     cnt = len(jdata)
 
@@ -13,14 +13,8 @@ with open('../news_20180106.json', 'r', encoding='utf-8') as f:
  
         title = jdata['news' + str(i)]['title']
         contents = jdata['news' + str(i)]['contents']
-        
-        if press == '머니투데이':             
-            news = moneyToday(press, title, contents)
-#         if press == 'YTN':             
-#             news = ytn(press, title, contents)
-#         if press == '한국일보':             
-#             news = ytn(press, title, contents)
-        elif press == '중앙일보':     
+
+        if press =='SBS CNBC':    
             print(title)
             print(contents)
             news = refin(press, title, contents)

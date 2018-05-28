@@ -12,6 +12,7 @@ import re
 
 #일요일 다시 긁어야함 - 국민일보
 
+#머니S
 #[주목! 경매물건]
 #허주열 기자
 #사진. 아디다스강인귀 기자
@@ -19,18 +20,6 @@ import re
 #http://news.naver.com/main/read.nhn?mode=LSD&mid=sec&sid1=101&oid=417&aid=0000287606
 #대책 마련 시급
 #다시 해야함
-def moneys(title, contents):
-#     contents = contents.split('사건번호')[0]
-     
-    writer = re.findall(r'\.[가-힣  ]{2,5}기자', contents)
-    if len(writer) != 0:
-        print(writer)
-        contents = contents.split(writer[0])[len(writer)-1]
-        
-    title = title.split(']')
-    title = title[0] if len(title) == 1 else title[1]
-    
-    return [title.strip(), contents.strip()]
 
 def sindonga(title, contents):
     
@@ -59,28 +48,16 @@ def sindonga(title, contents):
 
 
 #신상순[ⓒ 한국일보(), 무단 전재 및 재배포 금지]
-#그럭저럭
-def hankook(title, contents):
-    writer_email = re.findall(r'[가-힣 = ]+[0-9A-Za-z\.]+@hankookilbo.com\[ⓒ 한국일보', contents)
-    if len(writer_email) != 0:
-        print(writer_email)
-        contents = contents.split(writer_email[0])[0]
-    
-    writer = re.findall(r'[가-힣 ]+=?[가-힣]{2,5} 기자\[ⓒ 한국일보', contents)
-    if len(writer) != 0:
-        print(writer)
-        contents = contents.split(writer[0])[len(writer)-1]
-        
-    contents = contents.split('[ⓒ 한국일보(), 무단 전재 및 재배포 금지]')[0]
-
-    return [title.strip(), contents.strip()]
 
 #그럭저럭
 #밑에꺼 못거름
 #YTN Star 반서연 기자 (uiopkl22@ytnplus.co.kr)[사진제공 = CJ CGV]
 #취재기자ㅣ오인석촬영기자ㅣ윤원식영상편집ㅣ오유철자막뉴스 제작ㅣ이하영[저작권자(c) YTN & YTN PLUS 무단전재 및 재배포 금지]
-def ytn(title, contents):
-    ((), ())
+def ytn(press, title, contents):
+    if press != 'YTN':
+        print('wrong data')
+        return [title, contents]
+    
     if title.rfind('[자막뉴스]') != -1:
         writer = re.findall(r'[ 가-힣\ㅣ]+\[저작권자(c)', contents)
         if len(writer) != 0:
@@ -117,7 +94,7 @@ def ytn(title, contents):
 def moneyToday(press, title, contents):
     if press != '머니투데이':
         print('wrong data')
-        return [title.strip(), contents.strip()]
+        return [title, contents]
     
     writer = re.findall(r'\[머니투데이[ 가-힣 \(\)=,?&?]+\]', contents)
     if len(writer) != 0:
@@ -218,7 +195,67 @@ def moneyToday(press, title, contents):
 #이한라 기자였습니다.이한라 기자(hlmt@sbs.co.kr)
 #보다 자세한 사항은 e편한세상 홈페이지에서 확인할 수 있다.온라인 뉴스팀 기자(sbscnbcnews@sbs.co.kr)
 #[SBSCNBC 뉴미디어팀](기획 : 손석우 / 구성 : 김미화 / 편집 : 서이경)
+((), 
+ (('SBSCNBC[ 가-힣]+입니다', 1),(r'\(자세한 내용은 동영상을 시청하시기 바랍니다', 1), ('[ 가-힣]+기자였습니다.', 1) 
+  (r'[ 가-힣]+기자\([a-zA-Z0-9\._]@sbs\.co\.kr', 1), ('지금까지 [ 가-힣]습니다', 1), ('지금까지  SBSCNBC', 1),
+  (r'\[SBSCNBC 뉴미디어팀\]', 1), ('기자 잘 들었습니다', 1)))
+#[이데일리 김무연 기자] ~~~ 김무연 (nosmoke@edaily.co.kr)최신 웹툰이 매일 공짜... 꿀잼 '웹툰'6·13 지방선거, '선거판 한 눈에 보기'네이버 홈에서 ‘이데일리’ 기사 보려면
+#[이데일리 윤필호 기자] ~~~ 윤필호 (nothing@edaily.co.kr)최신 웹툰이 매일 공짜... 꿀잼 '웹툰'6·13 지방선거, '선거판 한 눈에 보기'네이버 홈에서 ‘이데일리’ 기사 보려면
+#[이데일리 MARKETPOINT] ~~~ 마켓포인트 (world@edaily.co.kr)최신 웹툰이 매일 공짜... 꿀잼 '웹툰'6·13 지방선거, '선거판 한 눈에 보기'네이버 홈에서 ‘이데일리’ 기사 보려면
+#[이데일리 박종오 기자] ~~~ 박종오 (pjo22@edaily.co.kr)
+def edaily(press, title, contents):
+    if press != '이데일리':
+        print('wrong data')
+        return [title, contents]
 
+    writer = re.findall(r'\[[ 가-힣=]*이데일리[ 가-힣 \(\)=,?&?]+\]', contents)
+    if len(writer) != 0:
+        contents = contents.replace(writer[0], '').strip()
+        writer[0] = writer[0].split('이데일리')[1].strip()
+        for i in ('기자', '특파원', ']'):
+            writer[0] = writer[0].split(i)[0].strip()
+        contents = contents.split(writer[0]+ ' (')[0]
+    
+    marketpoint = re.findall(r'\[이데일리 MARKETPOINT\]', contents)
+    if len(marketpoint) != 0:
+        contents = contents.replace('[이데일리 MARKETPOINT]','')[0]
+        contents = contents.split('마켓포인트 (world@edaily.co.kr)')[0]
+        
+    contents = contents.split('edaily.co.kr)')[0]
+    title = title.split(']')
+    title = title[0] if len(title) == 1 else title[1]
+    
+    return [title.strip(), contents.strip()]
+
+def hankook(press, title, contents):
+    if press != '한국경제':
+        print('wrong data')
+        return [title, contents]
+
+    writer = re.findall(r'\[[ 가-힣 \(\)=,?&?/]+\]', contents)
+    if len(writer) != 0:
+        contents = contents.replace(writer[0], '')
+        for i in ('[', '기자', ']'):
+            writer[0] = writer[0].replace(i, '').strip()
+        print(writer[0])
+        contents = contents.split(writer[0])[0]
+    
+    location = re.findall('[가-힣]+=$', contents)
+    if len(location) != 0:
+        contents = contents.replace(location[0], '')
+        
+    contents = contents.split('[] [] []ⓒ 한국경제 &, 무단전재 및 재배포 금지')[0]
+    contents = contents.split('ⓒ 한국경제 &, 무단전재 및 재배포 금지')[0]
+    
+    title = title.split(']')
+    title = title[0] if len(title) == 1 else title[1]
+    return [title.strip(), contents.strip()]
+
+
+#[주간동아] ~~~ | 김유림 기자 mupmup@donga.com
+#[주간동아] ~~~ | 구희언 기자 hawkeye@donga.com 사진 = 홍태식 기자
+#| 성균관대 경제학과 교수 Ynielsen@skku.edu
+#| 글  ·  사진 = 구희언 기자 hawkeye@donga.com
 patterns= {'경향신문' : (((r'\]', 2),), (('▶', 1),)),
            '매일경제' : (((r'\]', 2),), ((r'\[', 1),)),
            '세계일보' : (((r'\]', 2),), 
@@ -237,7 +274,7 @@ patterns= {'경향신문' : (((r'\]', 2),), (('▶', 1),)),
            '국민일보' : (((r'\]', 2),), #흠 
                       (('뉴시스GoodNews paper ⓒ', 1), ('GoodNews paper ⓒ', 1), ('각 부 종합,', 1), ('[가-힣]+=[가-힣]+', 1), 
                        ('[가-힣 ]+기자', 1))),
-           '머니S' : (((r'\]', 2),), (('▶', 1),)),
+           '머니S' : (((r'\]', 2),), ((r'\.[가-힣  ]{2,5}기자$', 1),)),
            '신동아' : (((r'\]', 2),), 
                      ((r'[\| ]*[0-9가-힣  ]+기자[ ]*[-_\.0-9a-zA-Z]+@[-_\.0-9a-zA-Z]+', 1),(r'[-_\.0-9a-zA-Z]+@[-_\.0-9a-zA-Z]+', 1),
                       (r'\[신동아\]', 0), ('[\| ]*[0-9가-힣  ]+\|', 1))),
@@ -245,12 +282,12 @@ patterns= {'경향신문' : (((r'\]', 2),), (('▶', 1),)),
            '중앙일보' : (((r'\[인사\]', 2), (r'\]', 2)), 
                       ((r'[ =가-힣]+[0-9A-Za-z\.]+@joongang.co.kr▶', 1), (r'[ =가-힣]+[기자]▶', 1),
                        (r'\[ⓒ 조인스랜드 : JTBC', 1), ('▶모바일에서 만나는 중앙일보', 1))),
-           '한국일보' : (((r'\]', 2),), ((r'\[ⓒ 한국일보\(', 1),)),
-           'YTN' : (((r'\]', 2),), ((r'\[저작권자\(c\) YTN', 1),)),
+           '한국일보' : (((r'\]', 2),), 
+                      ((r'[ 가-힣 =]+[ 0-9A-Za-z\.]+@hankookilbo\.com\[ⓒ 한국일보', 1), (r'[가-힣 ]+=?[ 가-힣]+기자[ ]?\[ⓒ 한국일보', 1), 
+                       (r'[ 가-힣 =]+[ 0-9A-Za-z\.]+@beautyhankook\.com\[ⓒ 한국일보', 1), (r'\[ⓒ 한국일보\(', 1),)),
            '뉴시스' : (((r'\]', 2),), 
                      ((r'\【[ 가-힣]+=뉴시스\】[ 가-힣]+기자[ =]+', 0), (r'[a-zA-Z0-9]+@newsis.com', 0), (r'\(사진[ =가-힣]+제공\)', 1),
                       ('공감언론 뉴시스가 독자 여러분의 소중한 제보를 기다립니다', 1))),
-           '머니투데이' : (((r'\]', 2),), ((r'\[머니투데이[ 가-힣 \(\)=,?&?]+\]', 1),)), #다른 함수 쓸꺼임
            '아시아경제' : (((r'\[부고\]', 3), (r'\[인사\]', 3), (r'\[포토\]', 0), (r'\]', 2)), 
                         ((r'\[[ 가-힣=\]*아시아경제[ 가-힣=]+\]', 0), (r'\[', 1), ('아시아경제 ', 1), (']', 1), 
                          (r'[ 가-힣 =]+[a-zA-Z0-9\._]+@asiae.co.kr', 1))),
@@ -295,15 +332,34 @@ patterns= {'경향신문' : (((r'\]', 2),), (('▶', 1),)),
                      (r'\[[ 가-힣]+/[ a-zA-Z0-9@\._]+\]', 1), (r'[a-zA-Z0-9\._]+@[a-zA-Z0-9\._]', 1), 
                      (r'MBN[ ]?뉴스[ 가-힣]+입니다\.', 1), (r'\[MBN 온라인 뉴스팀\]', 1), 
                      (r'\[MBN 온라인뉴스팀\]', 1), ('< Copyright', 1))),
-           '매경이코노미' : (((r'\]', 2),), (('▶', 1),)),
-           '서울신문' : (((r'\]', 2),), (('▶', 1),)),
-           '이데일리' : (((r'\]', 2),), (('▶', 1),)),
-           '주간동아' : (((r'\]', 2),), (('▶', 1),)),
-           '한국경제' : (((r'\]', 2),), (('▶', 1),)),
+           '매경이코노미' : (((r'\]', 2),), (('\[', 1),)),
+           '서울신문' : (((r'\]', 2),), 
+                      ((r'[ 가-힣]+[a-zA-Z0-9\._]+@seoul\.co\.kr▶', 1), ('▶  재미있는 세상', 1), 
+                        ('나우뉴스부★', 1), (r'▶ \[\]▶ \[\]'), (r'\[서울신문\]', 0))),
+           '주간동아' : (((r'\]', 2),), 
+                      ((r'\[주간동아\]', 0), (r'\|[ 가-힣·=]+[a-zA-Z0-9@\._]+', 1), 
+                       (r'[ 가-힣]+기자[ ]?[a-zA-Z0-9\._]+@donga.com', 1))),
            'SBS CNBC' : (((r'\]', 2),), (('▶', 1),))
            }
 
+#매경이코노미
+#[강승태 기자][본 기
+#[정다운 기자  jeongdw@mk.co.kr / 사진 : 윤관식 기자][본 기사는 매경이코노미 제1954호 (2018.04.18~04.24일자) 기사입니다][ⓒ 매일경제 & mk.co.kr, 무단전재 및 재배포 금지]
+#[도쿄 = 정욱 특파원  wook@mk.co.kr][본 기사는 매경이코노미 제1954호 (2018.04.18~04.24일자) 기사입니다][ⓒ 매일경제 & mk.co.kr, 무단전재 및 재배포 금지]
+#[ⓒ 매일경제 & mk.co.kr, 무단전재 및 재배포 금지]
+#[본 기사는 매경이코노미 제1940호 (2018.1.37~2018.1.9일자) 기사입니다][ⓒ 매일경제 & mk.co.kr, 무단전재 및 재배포 금지]
+#[특별취재팀 = 김경민(팀장)·노승욱·강승태·김기진 기자 / 그래픽 : 신기철][본 기사는 매경이코노미 제1940호 (2018.1.37~2018.1.9일자) 기사입니다][ⓒ 매일경제 & mk.co.kr, 무단전재 및 재배포 금지]
+#[명순영 기자  msy@mk.co.kr, 나건웅 기자  was
 # patern-삭제할 패턴과 삭제 모드 (모드-0:해당패턴만 삭제/1:해당패턴 뒤 삭제/2:해당패턴 앞 삭제) contents-삭제 대상 
+
+#서울신문
+#도쿄 김태균 특파원 windsea@seoul.co.kr서울 이재연 기자 oscal@seoul.co.kr▶  재미있는 세상[]▶ [] []ⓒ 서울신문(), 무단전재 및 재배포금지 - 고민해봐야함
+#▶  재미있는 세상[]▶ [] []ⓒ 서울신문(), 무단전재 및 재배포금지
+#김희리 기자 hitit@seoul.co.kr▶  재미있는 세상[]▶ [] []ⓒ 서울신문(), 무단전재 및 재배포금지
+#온라인뉴스부 iseoul@seoul.co.kr▶  재미있는 세상[]▶ [] []ⓒ 서울신문(), 무단전재 및 재배포금지
+#세종 황비웅 기자 stylist@seoul.co.kr▶  재미있는 세상[]▶ [] []ⓒ 서울신문(), 무단전재 및 재배포금지
+#이혜리 기자 hyerily@seoul.co.kr백민경 기자 white@seoul.co.kr▶▶ [] []ⓒ 서울신문(), 무단전재 및 재배포금지
+#나우뉴스부★ []▶ [] []ⓒ 서울신문(), 무단전재 및 재배포금지
 def remove(pattern, contents):
     
     for pa in pattern:
@@ -329,6 +385,16 @@ def remove(pattern, contents):
     return contents
 
 def refin(press, title, contents):
+    if press == '머니투데이':             
+        return moneyToday(press, title, contents)
+    
+    if press == 'YTN':             
+        return ytn(press, title, contents)
+    
+    if press == '이데일리':
+        return edaily(press, title, contents)
+    if press == '한국경제':
+        return hankook(press, title, contents)
     pattern = patterns[press]
     title = remove(pattern[0], title)
     contents = remove(pattern[1], contents)
