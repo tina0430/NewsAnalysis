@@ -220,8 +220,8 @@ def refin_news(press, title, contents):
     if press == '중앙SUNDAY':
         return ['','']
  
-    print(press)
-    print(title)
+#     print(press)
+#     print(title)
     pattern = patterns[press]
     title = remove(pattern[0], title)
     contents = remove(pattern[1], contents)
