@@ -24,5 +24,5 @@ def refin_new_day(file_name):
     return jdata
     
 if __name__ == "__main__":
-    refin_new_day('./news_20170505.json')
+    refin_new_day('./news_20171215.json')
     
