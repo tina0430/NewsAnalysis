@@ -3,7 +3,7 @@ import re
 from collections import Counter
 from operator import itemgetter
 
-# 읽을 파일 - nouns 부터 읽는다.
+# _nouns 파일을 읽는다.
 def read_nouns(filename):
     with open(filename, 'r', encoding = 'utf-8') as fstream:
         data_list = []
@@ -46,7 +46,8 @@ def read_pos(filename):
     return data_list
 
 # 내보내질 파일
-# 구분자 = \t (문자열 중 쉼표가 포함된 문자가 있으므로. (ex : 4,000만) )
+# 기본 구분자 = \t (문자열 중 쉼표가 포함된 문자가 있으므로. (ex : 4,000만) )
+# bPos : pos 함수의 결과물일 경우
 def write_count_csv(filename, count_data, sep = '\t', bPos = False):
     with open(filename, 'w', encoding = 'utf8') as fstream:
         if bPos:
@@ -66,7 +67,7 @@ def get_unique_count(data):
     sort_data = dict( sorted(count_data.items(), key = itemgetter(1), reverse = True) )
     return sort_data
 
-# 파일 경로를 전달
+# count 결과를 csv로 출력
 def create_count_csv(read_file_route, sep = '\t',  bPos = False):
     #data = read_nouns(read_file_route)
     data = read_pos(read_file_route)

@@ -11,7 +11,8 @@ import re
 import pandas
 
 from itertools import chain
-        
+
+# 문단을 문장으로 분할
 def split_paragraph(paragraph):
     pt = re.compile(r'[가-힣]\.')
     start_idx = 0
@@ -31,6 +32,7 @@ def split_paragraph(paragraph):
         
     return sentences
 
+# nouns 결과물에 대한 출력 함수
 def write_list(data, fileobj):
     for i, line in enumerate(data):
         i += 1
@@ -41,6 +43,7 @@ def write_list(data, fileobj):
             fileobj.write('\t')
     fileobj.write('\n')
 
+# pos 결과물에 대한 출력 함수
 def write_pos(pos_data, fileobj, sep = '_:_'):
     for i, line in enumerate(pos_data):
         i += 1
@@ -57,6 +60,8 @@ def write_pos(pos_data, fileobj, sep = '_:_'):
             txt = txt + '\t'
         fileobj.write(txt)
 
+# newsroute = 뉴스 경로
+# newsdata = 뉴스 json (dict) 객체
 def read_news(sep='\n', *args, **kwds):
     newsroute = kwds.get('newsroute')
     newsdata = kwds.get('newsdata')
@@ -76,11 +81,15 @@ def read_news(sep='\n', *args, **kwds):
     news = sep.join(news_lines)
     return news
 
-
+# text : 형태소 분석을 수행할 문자열
+# konlp_name : 형태소 분석 태그(엔진) 클래스 이름
+# func_name : 형태소 분석에 사용할 함수 이름
+# userDict : 사용자 정의 사전
 def get_KoNLP(text, konlp_name, func_name, **kwds):
     classname = globals()[konlp_name]
     konlp_obj = classname()
     
+    # 사용자 정의 사전 경로
     userDict_name = kwds.get('userDict')
     if userDict_name is not None:
         if konlp_name == 'cTwitter':
@@ -103,6 +112,8 @@ def get_KoNLP(text, konlp_name, func_name, **kwds):
     
     return words
 
+
+# 180529 main에서 사용하지 않음. 테스트용.
 # KoNLP를 실행하고 결과를 리턴합니다.
 # news_route : 크롤링한 뉴스 파일 경로
 # nlp_obj : KoNLP 객체 - Twitter, Kkma, Komoran, Hannanum 등

@@ -1,6 +1,3 @@
-#from newsRecoding import recoding
-#from newsRefining import refining
-
 from nlp import knlp, count, filter
 from newsRefining import refining
 from newsRecoding import recoding
@@ -28,9 +25,11 @@ def print_log(txt):
     add_log(txt)
     print( txt )
 
+# 파일명 분리
 def get_filename(news_route):
     return news_route.split('\\')[-1].split('.')[0]
 
+# 디렉토리 내의 뉴스 파일 경로 리스트를 리턴
 def get_news_file_list(folder_route):
     if os.path.isdir(folder_route) == False:
         return None
@@ -49,6 +48,7 @@ def get_news_file_list(folder_route):
     
     return file_list
 
+# 설정 변수 전역클래스
 class Settings():
     news_route = None
     konlp_class = None
@@ -72,6 +72,7 @@ class Settings():
         cls.user_dict_route = settings.user_dictionary[0].replace('\u202a','')
         cls.recoding_dict_route = settings.recoding_dictionary[0].replace('\u202a','')
 
+# 뉴스 객체, 전처리 정보를 담는다.
 class News():
     def __init__(self, news_route):
         self.route = news_route
@@ -117,7 +118,10 @@ class News():
     def get_news_debug_string(self, txt):
         return get_debug_string(' '.join(['os{} : {}'.format(os.getpid(), self.name), txt]))
     
+    # 뉴스 객체에 대한 전처리 - read news, refine, recoding, konlp, count, filter
+    # 뉴스 객체.route에 경로가 들어있어야 한다.
     def news_process(self):
+        # Multiprocessing 이 메모리를 공유하지 않으므로 Settings 다시 로딩
         Settings.settings(r'../files/settings.csv')
         log_list = []
         
@@ -204,13 +208,17 @@ class News():
         # save result
         self.write_csv(self.result, Settings.result_route, modifier='result')
 
+# for Multiprocessing
+# 뉴스 객체를 받아서 news_process()를 호출하여 객체에 대한 전처리를 수행한다.
 def run_News(news_object):
     if news_object is None:
         return None
     
     news_object.news_process()
     return news_object
-        
+
+# 뉴스 경로 리스트를 받아와서 refine 하는 함수
+# 180529 미사용
 def process_refine(news_route_list):
     news_refine = []
     for news_route in news_route_list:
@@ -224,6 +232,8 @@ def process_refine(news_route_list):
     
     return news_refine
 
+# 뉴스 데이터 리스트(json)를 받아와서 recoding 하는 함수
+# 180529 미사용
 def process_recoding(news_list):
     print(Settings.recoding_dict_route)
     recode_dict = recoding.load_recode_dict(Settings.recoding_dict_route)
@@ -234,6 +244,8 @@ def process_recoding(news_list):
     
     return recode_list
 
+# refine, recoding 된 데이터 출력용 함수
+# 180529 미사용
 def write_json(words, json_name, result_directory):
     if os.path.isdir(result_directory) == False:
         os.makedirs(result_directory, exist_ok=True)
@@ -243,6 +255,7 @@ def write_json(words, json_name, result_directory):
     file = open(new_name,'w',encoding='utf-8')
     json.dump(words, file, ensure_ascii = False,indent = 1)
 
+# 뉴스 경로 리스트를 분할 : 멀티프로세싱 수행 시 메모리 오버를 막기 위함
 def split_news_routes(news_routes, split_unit=100):
     result = []
     route_length = len(news_routes)
@@ -275,7 +288,9 @@ def main():
 #     print('finished work - recoding, time :', time.time() - start_recoding)
 #     print('length of recode list :', len(news_recoding_list))
     
+    # 뉴스 경로 불러오기
     news_routes = get_news_file_list(Settings.news_route)
+    # 뉴스 경로 리스트 분할 - [[경로뭉치 1], [경로뭉치 2], ...]
     news_routes = split_news_routes(news_routes, 200)
     if news_routes is None or len(news_routes) == 0:
         print_log("news directory in empty. check settings.csv's news_route.")
@@ -286,14 +301,16 @@ def main():
     for routes in news_routes:
         temp_news_list = []
         for route in routes:
+            # 뉴스 객체 생성, 경로 전달. 경로 데이터가 있어야 전처리 수행.
             temp_news_list.append(News(route))
     
-            # 멀티
+        # Multiprocessing 수행
         pool = multiprocessing.Pool(os.cpu_count() - 1)
         news_list.extend(pool.map(run_News, temp_news_list))
         pool.close()
         pool.join()
     
+    # 뉴스 로그 수집
     for news in news_list:
         news_log = news.process_log
         if news_log == None:
@@ -303,6 +320,7 @@ def main():
     log_end_main = 'end works - {} sec.'.format(str(time.time() - start))
     print_log(log_end_main)
     
+    # 로그 출력
     if len(debug_log) > 0:
         with open('log_' + str(datetime.now().strftime('%Y%m%d_%Hh-%Mm-%Ss')) +'.txt', 'w', encoding='utf-8') as fw:         
             fw.write(debug_log)
@@ -310,5 +328,3 @@ def main():
     
 if __name__ == '__main__':    
     main()
-    
-    
