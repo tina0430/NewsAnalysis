@@ -1,3 +1,5 @@
+# 180529 미사용
+
 from nlp import knlp, count, filter
 
 import os

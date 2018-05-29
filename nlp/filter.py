@@ -4,6 +4,7 @@ import pandas
 import time
 import re
 
+# nouns 파일을 읽고 명사 리스트 리턴
 def read_nouns_txt(nouns_route):
     with open(nouns_route, 'r', encoding='utf-8') as f:
         data = f.read()
@@ -14,7 +15,9 @@ def read_nouns_txt(nouns_route):
 # def run_filter():
 #     name = 'filter_dictionary.xlsx'
 #     filter_count(pandas.read_csv('news_20180113_Twitter_count.csv', sep = '\t'), name)
-        
+
+# nouns 에 대한 필터링
+# 180529 미사용
 def filter_nouns(filename, filtername):
     # pandas.read_excel()을 하려면 xlrd 패키지를 설치해야 한다.
     filter_dictionary = pandas.read_excel(filtername, usecols=0)
@@ -41,6 +44,7 @@ def filter_nouns(filename, filtername):
     with open('filtering_delete_word.txt', 'w', encoding = 'utf-8') as fw:
         fw.write(delete_words)
 
+# 빈도수 추출된 데이터에 대한 필터링
 def filter_count(counts, filtername):
     # pandas.read_excel()을 하려면 xlrd 패키지를 설치해야 한다.
     filter_dictionary = pandas.read_excel(filtername, usecols=0)
