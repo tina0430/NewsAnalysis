@@ -1,7 +1,8 @@
 import os, time, re, sys
 
 # 파이썬 쉘에서 실행할 때, 시스템에 경로 추가.
-sys.path.append('\\'.join(os.getcwd().split('\\')[0:-1]))
+if '\\'.join(os.getcwd().split('\\')[0:-1]) not in sys.path:
+    sys.path.append('\\'.join(os.getcwd().split('\\')[0:-1]))
 
 import json, pandas
 import itertools
