@@ -57,16 +57,23 @@ def write_pos(pos_data, fileobj, sep = '_:_'):
             txt = txt + '\t'
         fileobj.write(txt)
 
-def read_news(newsroute, sep='\n'):
-    with open(newsroute, 'r', encoding='utf-8') as f:
-        jdata = json.loads(f.read())
+def read_news(sep='\n', *args, **kwds):
+    newsroute = kwds.get('newsroute')
+    newsdata = kwds.get('newsdata')
 
-        news_lines = []
-        for i in range(len(jdata)):
-            news_idx = 'news' + str(i + 1)
-            news_lines.append(jdata[news_idx]['title'])
-            news_lines.append(jdata[news_idx]['contents'])
-        news = sep.join(news_lines)
+    jdata = None
+    if newsroute is not None:
+        with open(newsroute, 'r', encoding='utf-8') as f:
+            jdata = json.loads(f.read())
+    elif newsdata is not None:
+        jdata = newsdata
+
+    news_lines = []
+    for i in range(len(jdata)):
+        news_idx = 'news' + str(i + 1)
+        news_lines.append(jdata[news_idx]['title'])
+        news_lines.append(jdata[news_idx]['contents'])
+    news = sep.join(news_lines)
     return news
 
 
