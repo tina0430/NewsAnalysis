@@ -1,14 +1,18 @@
-from nlp import knlp, count, filter
-from newsRefining import refining
-from newsRecoding import recoding
+import os, time, re, sys
 
-import os, time, re
+# 파이썬 쉘에서 실행할 때, 시스템에 경로 추가.
+sys.path.append('\\'.join(os.getcwd().split('\\')[0:-1]))
+
 import json, pandas
 import itertools
 from datetime import datetime
 import multiprocessing
 
+from nlp import knlp, count, filter
+from newsRefining import refining
+from newsRecoding import recoding
 
+settings_route = r'../files/settings.csv'
 debug_log = ''
 
 def get_debug_string(txt):
@@ -122,7 +126,7 @@ class News():
     # 뉴스 객체.route에 경로가 들어있어야 한다.
     def news_process(self):
         # Multiprocessing 이 메모리를 공유하지 않으므로 Settings 다시 로딩
-        Settings.settings(r'../files/settings.csv')
+        Settings.settings(settings_route)
         log_list = []
         
         # start
@@ -269,7 +273,6 @@ def main():
     print_log(log_start_main)
     start = time.time()
     
-    settings_route = r'../files/settings.csv'
     Settings.settings(settings_route)
     
 #     Settings.settings(settings_route)
@@ -326,5 +329,5 @@ def main():
             fw.write(debug_log)
 
     
-if __name__ == '__main__':    
+if __name__ == '__main__':
     main()
