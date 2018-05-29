@@ -119,7 +119,14 @@ class News():
     
     def news_process(self):
         Settings.settings(r'../files/settings.csv')
-
+        log_list = []
+        
+        # start
+        start_news = time.time()
+        log_start_news = self.get_news_debug_string('- start news process')
+        print(log_start_news)
+        log_list.append(log_start_news)
+        
         # refine
         start_refine_news = time.time()
         refine_data = refining.refin_new_day(self.route)
@@ -128,6 +135,7 @@ class News():
 
         log_refine_news = self.get_news_debug_string('- refine - {}'.format(str(end_refine_news - start_refine_news)))
         print(log_refine_news)
+        log_list.append(log_refine_news)
         
         # recoding
         start_recoding_news = time.time()
@@ -139,6 +147,7 @@ class News():
         
         log_recoding_news = self.get_news_debug_string('- recoding - {}'.format(str(end_recoding_news - start_recoding_news)))
         print(log_recoding_news)
+        log_list.append(log_recoding_news)
 
 #         self.news = knlp.read_news(self.route)
 #         end_read_news = time.time()
@@ -160,6 +169,8 @@ class News():
         
         log_nouns = self.get_news_debug_string('- cTwitter.nouns - {}'.format(str(end_konlp - start_konlpy)))
         print(log_nouns)
+        log_list.append(log_nouns)
+        
         self.write_nouns(Settings.result_route + '_nouns')
 
         # count
@@ -171,6 +182,7 @@ class News():
         
         log_count = self.get_news_debug_string('- count - {}'.format(str(end_count - start_count)))
         print(log_count)
+        log_list.append(log_count)
         
         # filter
         start_filter = time.time()
@@ -179,9 +191,15 @@ class News():
         
         log_filter = self.get_news_debug_string('- filter - {}'.format(str(end_filter - start_filter)))
         print(log_filter)
+        log_list.append(log_filter)
+        
+        end_news = time.time()
+        log_end_news = self.get_news_debug_string('- end news process - {}'.format(str(end_news - start_news)))
+        print(log_end_news)
+        log_list.append(log_end_news)
         
         # save log
-        self.process_log = ''.join([log_refine_news, log_recoding_news, log_nouns, log_count, log_filter])
+        self.process_log = ''.join(log_list)
         
         # save result
         self.write_csv(self.result, Settings.result_route, modifier='result')
