@@ -120,6 +120,9 @@ class News():
     def news_process(self):
         Settings.settings(r'../files/settings.csv')
 
+        start_news = time.time()
+        log_start = self.get_news_debug_string('- start news')
+        print(log_start)
         # refine
         start_refine_news = time.time()
         refine_data = refining.refin_new_day(self.route)
@@ -180,8 +183,11 @@ class News():
         log_filter = self.get_news_debug_string('- filter - {}'.format(str(end_filter - start_filter)))
         print(log_filter)
         
+        end_news = time.time()
+        log_end = self.get_news_debug_string('- end news - {}'.format(str(end_news - start_news)))
+        print(log_end)
         # save log
-        self.process_log = ''.join([log_refine_news, log_recoding_news, log_nouns, log_count, log_filter])
+        self.process_log = ''.join([log_start, log_refine_news, log_recoding_news, log_nouns, log_count, log_filter, log_end])
         
         # save result
         self.write_csv(self.result, Settings.result_route, modifier='result')
@@ -264,23 +270,22 @@ def main():
         print_log(Settings.news_route)
         return
             
-    news_list = []
     for routes in news_routes:
-        temp_news_list = []
+        news_list = []
         for route in routes:
-            temp_news_list.append(News(route))
+            news_list.append(News(route))
     
             # 멀티
         pool = multiprocessing.Pool(os.cpu_count() - 1)
-        news_list.extend(pool.map(run_News, temp_news_list))
+        news_list = pool.map(run_News, news_list)
         pool.close()
         pool.join()
-    
-    for news in news_list:
-        news_log = news.process_log
-        if news_log == None:
-            news_log = 'None'
-        add_log(news_log, prefix=False)
+        
+        for news in news_list:
+            news_log = news.process_log
+            if news_log == None:
+                news_log = 'None'
+            add_log(news_log, prefix=False)
     
     log_end_main = 'end works - {} sec.'.format(str(time.time() - start))
     print_log(log_end_main)
