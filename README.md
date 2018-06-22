@@ -15,7 +15,8 @@ The json file's format is <br>
 
 Install
 -------------
-
+numpy, pandas, jpype, konlpy 패키지 설치 및 작동이 되어야 합니다.
+customized_konlpy, xlrd 패키지 설치가 필요합니다.
 
 Crawler
 -------------
