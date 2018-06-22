@@ -4,9 +4,9 @@ Analyze the stock price using articles written in Korean.
 You must have an article json file that is already crawled.
 The json file's format is 
 {
-  "news1" : {"title":"new title", "contents":"new contents", "press":"press name"}, 
-  "news2" : {"title":"new title", "contents":"new contents", "press":"press name"}, 
-  "news3" : {"title":"new title", "contents":"new contents", "press":"press name"},
+  "news1" : {"title":"new title", "contents":"new contents", "press":"press name"}, <br>
+  "news2" : {"title":"new title", "contents":"new contents", "press":"press name"}, <br>
+  "news3" : {"title":"new title", "contents":"new contents", "press":"press name"}, <br>
     .
     .
     .
