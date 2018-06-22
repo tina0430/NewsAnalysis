@@ -1,16 +1,16 @@
 NewsAnalysis
 =============
-Analyze the stock price using articles written in Korean.
-You must have an article json file that is already crawled.
-The json file's format is 
-{
-  "news1" : {"title":"new title", "contents":"new contents", "press":"press name"}, <br>
-  "news2" : {"title":"new title", "contents":"new contents", "press":"press name"}, <br>
-  "news3" : {"title":"new title", "contents":"new contents", "press":"press name"}, <br>
-    .
-    .
-    .
-}
+Analyze the stock price using articles written in Korean.<br>
+You must have an article json file that is already crawled.<br>
+The json file's format is <br>
+{<br>
+&nbsp  "news1" : {"title":"new title", "contents":"new contents", "press":"press name"}, <br>
+&nbsp  "news2" : {"title":"new title", "contents":"new contents", "press":"press name"}, <br>
+&nbsp  "news3" : {"title":"new title", "contents":"new contents", "press":"press name"}, <br>
+&nbsp&nbsp .
+&nbsp&nbsp .
+&nbsp&nbsp .
+}<br>
 
 Install
 -------------
