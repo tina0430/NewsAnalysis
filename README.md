@@ -1,4 +1,30 @@
-# NewsAnalysis
+NewsAnalysis
+=============
+Analyze the stock price using articles written in Korean.
+You must have an article json file that is already crawled.
+The json file's format is 
+{
+  "news1" : {"title":"new title", "contents":"new contents", "press":"press name"}, 
+  "news2" : {"title":"new title", "contents":"new contents", "press":"press name"}, 
+  "news3" : {"title":"new title", "contents":"new contents", "press":"press name"},
+    .
+    .
+    .
+}
+
+Install
+-------------
+
+
+Crawler
+-------------
+
+Analysis
+-------------
+
+
+1. 코스피 지수 크롤링
+
 
 1. 코스피 지수를 크롤링
 2. 이미 크롤링되어있는 뉴스 데이터를 정제
