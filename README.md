@@ -19,7 +19,7 @@ Install
 
 Crawler
 -------------
-##KOSPI
+## KOSPI
 <https://kr.investing.com/>
 
 Refine
