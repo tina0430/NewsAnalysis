@@ -48,3 +48,5 @@ kospi 크롤링은 .\kospiCrwaling\kospi.py 를 별개로 실행해야 합니다
 ./newsRecoding.recoding.py : recoding 을 수행합니다.<br/>
 <br/>
 ./newsRefine : refine 관련 디렉토리입니다.<br/>
+./newsRefine/functions.py : 언론사별 데이터 정제 방법 정의
+./newsRefine/refining.py : 데이터 정제 

@@ -328,7 +328,7 @@ def main():
     if len(debug_log) > 0:
         with open('log_' + str(datetime.now().strftime('%Y%m%d_%Hh-%Mm-%Ss')) +'.txt', 'w', encoding='utf-8') as fw:         
             fw.write(debug_log)
-
+    
     
 if __name__ == '__main__':
     main()
