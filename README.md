@@ -32,7 +32,7 @@ Refine
 3. 형태소 분석 [knlp.py](https://github.com/tina0430/NewsAnalysis/tree/master/nlp)
 4. 명사 빈도수 계산 [count.py](https://github.com/tina0430/NewsAnalysis/tree/master/nlp)
 5. 불필요한 명사 제거 [filter.py](https://github.com/tina0430/NewsAnalysis/tree/master/nlp)
-　1~5를 한 번에 수행하고자 한다면 [main.py](https://github.com/tina0430/NewsAnalysis/tree/master/main)
+<br>　1~5를 한 번에 수행하고자 한다면 [main.py](https://github.com/tina0430/NewsAnalysis/tree/master/main)
 
 Analysis
 -------------
