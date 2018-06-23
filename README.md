@@ -1,8 +1,11 @@
 NewsAnalysis
 =============
-Analyze the stock price using articles written in Korean.<br>
+<--Analyze the stock price using articles written in Korean.<br>
 You must have an article json file that is already crawled.<br>
-The json file's format is <br>
+The json file's format is <br>--!>
+
+한글로 쓰여진 금융 관련 기사의 형태소 분석을 통해 주가의 등락을 예측하는 프로그램입니다.
+금융 관련 기사는 json 파일로 미리 준비되어있어야 하며 그 포멧은 다음과 같습니다.
 
     {
         "news1" : {"title":"new title", "contents":"new contents", "press":"press name"}, 
