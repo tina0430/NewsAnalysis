@@ -4,8 +4,8 @@ NewsAnalysis
 You must have an article json file that is already crawled.<br>
 The json file's format is <br>-->
 
-한글로 쓰여진 금융 관련 기사의 형태소 분석을 통해 주가의 등락을 예측하는 프로그램입니다.
-금융 관련 기사는 json 파일로 미리 준비되어있어야 하며 그 포멧은 다음과 같습니다.
+한글로 쓰여진 금융 관련 기사의 형태소 분석을 통해 주가의 등락을 예측하는 프로그램입니다. <br>
+금융 관련 기사는 json 파일로 미리 준비되어있어야 하며 그 포멧은 다음과 같습니다. <br>
 
     {
         "news1" : {"title":"new title", "contents":"new contents", "press":"press name"}, 
@@ -18,20 +18,21 @@ The json file's format is <br>-->
 
 Install
 -------------
-numpy, pandas, jpype, konlpy 패키지 설치 및 작동이 되어야 합니다.
-customized_konlpy, xlrd 패키지 설치가 필요합니다.
+numpy, pandas, jpype, konlpy, customized_konlpy, xlrd 패키지 설치 및 작동이 되어야 합니다.
 
 Crawler
 -------------
 ### KOSPI
+kospi.py
 <https://kr.investing.com/>
 
 Refine
 -------------
-1. 기사 작성자, 광고, 언론사 이름, 저작권 표시 제거
-2. 축약어, 영어 단어 리코딩
-3. 명사만  추출
-4. 불필요한 명사 제거
+1. 기사 작성자, 광고, 언론사 이름, 저작권 표시 제거    refining.py
+2. 축약어, 영어 단어 리코딩    recoding.py
+3. 형태소 분석    knlp.py
+4. 명사 빈도수 계산    count.py
+5. 불필요한 명사 제거    filter.py
 
 Analysis
 -------------
