@@ -20,9 +20,8 @@ Install
 -------------
 numpy, pandas, jpype, konlpy, customized_konlpy, xlrd 패키지 설치 및 작동이 되어야 합니다.<br>
 
-Crawler
+KOSPI Crawler
 -------------
-　### KOSPI
 　코스피 대비값 크롤링 [kospi.py](https://github.com/tina0430/NewsAnalysis/tree/master/kospiCrwaling) <br>
 　크롤링 장소 : <https://kr.investing.com/><br>
 
