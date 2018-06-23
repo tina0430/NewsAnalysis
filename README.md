@@ -17,17 +17,20 @@ The json file's format is <br>-->
     }
 
 <br>
+
 Install
 -------------
 numpy, pandas, jpype, konlpy, customized_konlpy, xlrd 패키지 설치 및 작동이 되어야 합니다.<br>
 
 <br>
+
 KOSPI Crawler
 -------------
 　코스피 대비값 크롤링 [kospi.py](https://github.com/tina0430/NewsAnalysis/tree/master/kospiCrwaling) <br>
 　크롤링 장소 : <https://kr.investing.com/><br>
 
 <br>
+
 Refine
 -------------
 1. 기사 작성자, 광고, 언론사 이름, 저작권 표시 제거 [refining.py](https://github.com/tina0430/NewsAnalysis/tree/master/newsRefining)
@@ -39,6 +42,7 @@ Refine
 　1~5를 한 번에 수행 [main.py](https://github.com/tina0430/NewsAnalysis/tree/master/main)
 
 <br>
+
 Analysis
 -------------
 1. 90일 부터 365일치의 뉴스 단어 빈도수 셋을 각각 만듦
