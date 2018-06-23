@@ -31,8 +31,8 @@ Refine
 2. 축약어, 영어 단어 리코딩 [recoding.py](https://github.com/tina0430/NewsAnalysis/tree/master/newsRecoding)
 3. 형태소 분석 [knlp.py](https://github.com/tina0430/NewsAnalysis/tree/master/nlp)
 4. 명사 빈도수 계산 [count.py](https://github.com/tina0430/NewsAnalysis/tree/master/nlp)
-5. 불필요한 명사 제거 [filter.py](https://github.com/tina0430/NewsAnalysis/tree/master/nlp)
-<br>
+5. 불필요한 명사 제거 [filter.py](https://github.com/tina0430/NewsAnalysis/tree/master/nlp)<br>
+
 1~5를 한 번에 수행 [main.py](https://github.com/tina0430/NewsAnalysis/tree/master/main)
 
 Analysis
