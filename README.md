@@ -18,21 +18,21 @@ The json file's format is <br>-->
 
 Install
 -------------
-numpy, pandas, jpype, konlpy, customized_konlpy, xlrd 패키지 설치 및 작동이 되어야 합니다.
+numpy, pandas, jpype, konlpy, customized_konlpy, xlrd 패키지 설치 및 작동이 되어야 합니다.<br>
 
 Crawler
 -------------
 ### KOSPI
-코스피 대비값 크롤링 kospi.py 
+코스피 대비값 크롤링 [kospi.py](https://github.com/tina0430/NewsAnalysis/tree/master/kospiCrwaling) <br>
 크롤링 장소 : <https://kr.investing.com/><br>
 
 Refine
 -------------
-1. 기사 작성자, 광고, 언론사 이름, 저작권 표시 제거    refining.py
-2. 축약어, 영어 단어 리코딩    [recoding.py](https://github.com/tina0430/NewsAnalysis/tree/master/newsRecoding)
-3. 형태소 분석    knlp.py
-4. 명사 빈도수 계산    count.py
-5. 불필요한 명사 제거    filter.py
+1. 기사 작성자, 광고, 언론사 이름, 저작권 표시 제거 [refining.py](https://github.com/tina0430/NewsAnalysis/tree/master/newsRefining)
+2. 축약어, 영어 단어 리코딩 [recoding.py](https://github.com/tina0430/NewsAnalysis/tree/master/newsRecoding)
+3. 형태소 분석 [knlp.py](https://github.com/tina0430/NewsAnalysis/tree/master/nlp)
+4. 명사 빈도수 계산 [count.py](https://github.com/tina0430/NewsAnalysis/tree/master/nlp)
+5. 불필요한 명사 제거 [filter.py](https://github.com/tina0430/NewsAnalysis/tree/master/nlp)
 
 Analysis
 -------------
