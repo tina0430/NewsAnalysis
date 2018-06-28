@@ -1,0 +1,9 @@
+1. 사용자 패키지 정의 함수 R 파일  전체 실행
+2. fileopen.R 전체 실행
+3.  02_dataset 추출.R에서 period<-c(247:266) 으로 변경
+3.2 그 후에는 c(267:286) 이런식으로 20일씩 지정
+4. pefiod 수정후 for문 까지 실행
+5. 완료 되면  맨 밑에 write.csv 실행
+
+*fileopen.R 에서 setwd('c:\\BOB') 처럼 폴더 지정  
+ 
