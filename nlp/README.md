@@ -1,4 +1,4 @@
-numpy, pandas, jpype, konlpy 패키지 설치 및 작동이 되어야 합니다.<br/>
+numpy, pandas, konlpy 패키지 설치 및 작동이 되어야 합니다.<br/>
 xlrd 패키지 설치가 필요합니다.</br>
 <br/>
 konlp<br/>
