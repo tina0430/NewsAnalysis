@@ -20,13 +20,13 @@ The json file's format is <br>-->
 
 Install
 -------------
-numpy, pandas, jpype, konlpy, customized_konlpy, xlrd 패키지 설치 및 작동이 되어야 합니다.<br>
+numpy, pandas, konlpy, customized_konlpy, xlrd 패키지 설치 및 작동이 되어야 합니다.<br>
 
 <br>
 
 KOSPI Crawler
 -------------
-　코스피 대비값 크롤링 [kospi.py](https://github.com/tina0430/NewsAnalysis/tree/master/kospiCrwaling) <br>
+　코스피 대비값 크롤링 [kospi.py](https://github.com/tina0430/NewsAnalysis/tree/master/kospiCrawling) <br>
 　크롤링 장소 : <https://kr.investing.com/><br>
 
 <br>

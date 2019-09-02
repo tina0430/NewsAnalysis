@@ -1,4 +1,4 @@
-numpy, pandas, jpype, konlpy 패키지 설치 및 작동이 되어야 합니다.<br/>
+numpy, pandas, konlpy 패키지 설치 및 작동이 되어야 합니다.<br/>
 customized_konlpy, xlrd 패키지 설치가 필요합니다.<br/>
 <br/>
 ./files : 설정파일과 뉴스 데이터 경로의 기본값으로 설정되어 있는 디렉토리들이 들어있습니다.<br/>
@@ -32,8 +32,8 @@ main() 이 종료될 때 main 폴더에 간단한 로그 파일을 생성합니�
 데이터의 양이 많을 경우, 메모리 초과로 인한 오류가 발생할 수 있습니다.<br/>
 컴퓨터의 메모리에 따라 다르지만 대략 3~6개월 단위로 끊어서 실행하는 것을 권장합니다.<br/>
 <br/>
-./kospiCrwaling : 코스피 크롤링 관련 디렉토리입니다.<br/>
-kospi 크롤링은 .\kospiCrwaling\kospi.py 를 별개로 실행해야 합니다.<br/>
+./kospiCrawling : 코스피 크롤링 관련 디렉토리입니다.<br/>
+kospi 크롤링은 .\kospiCrawling\kospi.py 를 별개로 실행해야 합니다.<br/>
 <br/>
 ./nlp : 형태소 분석 및 빈도수 계산, 필터링 관련 디렉토리입니다.<br/>
 ./nlp/count.py : 빈도수 계산<br/>

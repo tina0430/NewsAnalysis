@@ -1,3 +1,6 @@
 *.json
 *.txt
+!requirements.txt
+*/__pycache__/
+/kospiCrawling/*.csv
 /NewsAnalysis.zip
