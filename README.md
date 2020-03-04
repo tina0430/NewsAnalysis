@@ -8,9 +8,9 @@ The json file's format is <br>-->
 금융 관련 기사는 json 파일로 미리 준비되어있어야 하며 그 포멧은 다음과 같습니다. <br>
 
     {
-        "news1" : {"title":"new title", "contents":"new contents", "press":"press name"}, 
-        "news2" : {"title":"new title", "contents":"new contents", "press":"press name"}, 
-        "news3" : {"title":"new title", "contents":"new contents", "press":"press name"}, 
+        "news1" : {"title":"news title", "contents":"news contents", "press":"press name"}, 
+        "news2" : {"title":"news title", "contents":"news contents", "press":"press name"}, 
+        "news3" : {"title":"news title", "contents":"newss contents", "press":"press name"}, 
             . 
             . 
             . 
