@@ -1,5 +1,7 @@
 NewsAnalysis
 =============
+[한국어](README.md) [English](README.en.md) 
+
 Analyze the stock price using articles written in Korean.<br>
 You must have an article json file that is already crawled.<br>
 The json file's format is.. <br>
